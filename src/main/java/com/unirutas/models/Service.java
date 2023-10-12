@@ -3,14 +3,14 @@ package com.unirutas.models;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Servicio {
-    private final List<Horario> listadoHorarios;
+public class Service {
+    private final List<Schedule> listadoHorarios;
     private final List<Bus> listadoBuses;
-    private final List<Alerta> listadoAlertas;
-    private final Ruta ruta;
-    private final Sentido sentido;
+    private final List<Alert> listadoAlertas;
+    private final Route ruta;
+    private final Direction sentido;
 
-    public Servicio(Ruta ruta, Sentido sentido) {
+    public Service(Route ruta, Direction sentido) {
         this.listadoHorarios = new ArrayList<>();
         this.listadoBuses = new ArrayList<>();
         this.listadoAlertas = new ArrayList<>();
@@ -18,7 +18,7 @@ public class Servicio {
         this.sentido = sentido;
     }
 
-    public List<Horario> getHorarios() {
+    public List<Schedule> getSchedules() {
         return this.listadoHorarios;
     }
 
@@ -26,31 +26,31 @@ public class Servicio {
         return this.listadoBuses;
     }
 
-    public List<Alerta> getAlertas() {
+    public List<Alert> getAlertas() {
         return this.listadoAlertas;
     }
 
-    public void añadirBus(Bus bus) {
+    public void addBus(Bus bus) {
         listadoBuses.add(bus);
     }
 
-    public void añadirHorario(Horario horario) {
+    public void addSchedule(Schedule horario) {
         listadoHorarios.add(horario);
     }
 
-    public void añadirAlerta(Alerta alerta) {
+    public void añadirAlerta(Alert alerta) {
         listadoAlertas.add(alerta);
     }
 
-    public void removerBus(Bus bus) {
+    public void removeBus(Bus bus) {
         listadoBuses.remove(bus);
     }
 
-    public void removerHorario(Horario horario) {
+    public void removeSchedule(Schedule horario) {
         listadoHorarios.remove(horario);
     }
 
-    public void removerAlerta(Alerta alerta) {
+    public void removerAlerta(Alert alerta) {
         listadoAlertas.remove(alerta);
     }
 }

@@ -1,9 +1,9 @@
 package com.unirutas;
 
 import com.unirutas.controllers.BusController;
-import com.unirutas.controllers.RecorridoController;
-import com.unirutas.controllers.ServicioController;
-import com.unirutas.controllers.UsuarioController;
+import com.unirutas.controllers.JourneyController;
+import com.unirutas.controllers.ServiceController;
+import com.unirutas.controllers.UserController;
 import com.unirutas.models.*;
 
 import java.time.LocalTime;
@@ -14,41 +14,41 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
         // Crear controladores
-        UsuarioController usuarioController = new UsuarioController();
+        UserController userController = new UserController();
         BusController busController = new BusController();
-        RecorridoController recorridoController = new RecorridoController();
+        JourneyController journeyController = new JourneyController();
 
-        // Crear recorrido y paraderos
-        Coordenada coordenada1 = new Coordenada(1.0, 2.0);
-        Coordenada coordenada2 = new Coordenada(3.0, 4.0);
+        // Crear journey y stops
+        Coordinate coordinate1 = new Coordinate(1.0, 2.0);
+        Coordinate coordinate2 = new Coordinate(3.0, 4.0);
 
-        Paradero paradero1 = new Paradero("Paradero1", "Descripción del paradero 1", coordenada1);
-        Paradero paradero2 = new Paradero("Paradero2", "Descripción del paradero 2", coordenada2);
+        Stop stop1 = new Stop("Paradero1", "Descripción del paradero 1", coordinate1);
+        Stop stop2 = new Stop("Paradero2", "Descripción del paradero 2", coordinate2);
 
-        List<Paradero> paraderos = new ArrayList<>(Arrays.asList(paradero1, paradero2));
-        Recorrido recorrido = new Recorrido(paraderos, new ArrayList<>());
+        List<Stop> stops = new ArrayList<>(Arrays.asList(stop1, stop2));
+        Journey journey = new Journey(stops, new ArrayList<>());
 
         // Crear servicio y suscribir estudiante
-        Ruta ruta = new Ruta("Ruta1", recorrido);
-        Sentido sentido = new Sentido("Sentido1", recorrido);
-        ServicioController servicioController = new ServicioController(ruta, sentido);
+        Route route = new Route("Ruta1", journey);
+        Direction direction = new Direction("Sentido1", journey);
+        ServiceController serviceController = new ServiceController(route, direction);
 
         // Agregar horarios y buses al servicio
-        Horario horario1 = new Horario(LocalTime.of(8, 0));
-        Horario horario2 = new Horario(LocalTime.of(10, 0));
+        Schedule schedule1 = new Schedule(LocalTime.of(8, 0));
+        Schedule schedule2 = new Schedule(LocalTime.of(10, 0));
 
         Bus bus1 = new Bus(30, "AB123");
         Bus bus2 = new Bus(25, "CD456");
 
-        servicioController.asignarHorario(horario1);
-        servicioController.asignarHorario(horario2);
+        serviceController.assignSchedule(schedule1);
+        serviceController.assignSchedule(schedule2);
 
-        servicioController.asignarBus(bus1);
-        servicioController.asignarBus(bus2);
+        serviceController.assignBus(bus1);
+        serviceController.assignBus(bus2);
 
         // Asignar conductor a un bus
-        Conductor conductor1 = new Conductor("Conductor1", "C001");
-        bus1.asignarConductor(conductor1);
+        Driver driver1 = new Driver("Conductor1", "C001");
+        bus1.assignDriver(driver1);
 
         // Obtener información de un bus
         busController.getBusInfo(bus1);
@@ -58,8 +58,8 @@ public class Main {
         userController.createUser(student);
 
         // Crear un administrativo
-        Administrativo administrativo = new Administrativo("Kevin Martinez", "160004314", "ksmartinez", "321");
-        usuarioController.crearAdministrativo(administrativo);
+        Administrative administrative = new Administrative("Kevin Martinez", "160004314", "ksmartinez", "321");
+        userController.createUser(administrative);
 
         // Actualizar un estudiante (por ejemplo, cambiar su contraseña)
         student.changePassword("555");
@@ -74,10 +74,10 @@ public class Main {
         userController.updateUser(administrative);
 
         // Eliminar un estudiante
-        // usuarioController.eliminarUsuario(estudiante);
+        // userController.eliminarUsuario(estudiante);
 
         // Eliminar un administrativo
-        // usuarioController.eliminarUsuario(administrativo);
+        // userController.eliminarUsuario(administrativo);
 
     }
 }

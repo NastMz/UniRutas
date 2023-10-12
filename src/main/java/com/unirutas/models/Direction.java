@@ -1,10 +1,10 @@
 package com.unirutas.models;
 
-public class Sentido {
+public class Direction {
     private final String nombre;
-    private final Recorrido recorrido;
+    private final Journey recorrido;
 
-    public Sentido(String nombre, Recorrido recorrido) {
+    public Direction(String nombre, Journey recorrido) {
         this.nombre = nombre;
         this.recorrido = recorrido;
     }

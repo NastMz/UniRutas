@@ -27,5 +27,3 @@ public abstract class User extends Person {
     public void update(User user) {}
 
 }
-
-

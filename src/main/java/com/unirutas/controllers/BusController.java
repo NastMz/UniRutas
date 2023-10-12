@@ -1,30 +1,30 @@
 package com.unirutas.controllers;
 
 import com.unirutas.models.Bus;
-import com.unirutas.models.Conductor;
+import com.unirutas.models.Driver;
 
 public class BusController {
 
-    public void agregarBus(Bus bus) {
+    public void addBus(Bus bus) {
         // TODO: Implementar la lógica para añadirlo en la DB
     }
 
-    public void eliminarBus(Bus bus) {
+    public void removeBus(Bus bus) {
         // TODO: Implementar la lógica para añadirlo en la DB
     }
 
     public void getBusInfo(Bus bus) {
         // TODO: Implementar la lógica para añadirlo en la DB
-        System.out.println("Placa: " + bus.getPlaca());
-        System.out.println("Capacidad: " + bus.getCapacidad());
+        System.out.println("Placa: " + bus.getPlate());
+        System.out.println("Capacidad: " + bus.getCapacity());
         System.out.println("Conductores: ");
-        for (Conductor conductor : bus.getConductores()) {
-            System.out.println("- Nombre: " + conductor.getNombre());
-            System.out.println("  Documento: " + conductor.getCodigo());
+        for (Driver driver : bus.getDrivers()) {
+            System.out.println("- Nombre: " + driver.getName());
+            System.out.println("  Documento: " + driver.getCode());
         }
     }
 
-    public void actualizarBus(Bus bus) {
+    public void updateBus(Bus bus) {
         //TODO: Implementar la lógica para añadirlo en la DB
     }
 }

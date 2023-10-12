@@ -1,9 +1,13 @@
 package com.unirutas.models;
 
-public class Administrativo extends Usuario {
+import com.unirutas.repository.GenericDTO;
 
-    public Administrativo(String nombre, String codigo, String nombreUsuario, String contrasena) {
-        super(nombre, codigo, nombreUsuario, contrasena);
+import java.util.List;
+
+public class Administrative extends User {
+
+    public Administrative(String name, String code, String username, String password) {
+        super(name, code, username, password);
     }
 
     @Override

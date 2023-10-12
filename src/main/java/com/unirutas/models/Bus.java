@@ -4,33 +4,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Bus {
-    private final int capacidad;
-    private final String placa;
-    private final List<Conductor> conductores;
+    private final String plate_number;
+    private final int capacity;
+    private final List<Driver> drivers;
 
-    public Bus(int capacidad, String placa) {
-        this.capacidad = capacidad;
-        this.placa = placa;
-        this.conductores = new ArrayList<>();
+    public Bus(int capacity, String plate_number) {
+        this.capacity = capacity;
+        this.plate_number = plate_number;
+        this.drivers = new ArrayList<>();
     }
 
-    public int getCapacidad() {
-        return capacidad;
+    public int getCapacity() {
+        return capacity;
     }
 
-    public String getPlaca() {
-        return placa;
+    public String getPlate() {
+        return plate_number;
     }
 
-    public List<Conductor> getConductores() {
-        return conductores;
+    public List<Driver> getDrivers() {
+        return drivers;
     }
 
-    public void asignarConductor(Conductor conductor) {
-        conductores.add(conductor);
+    public void assignDriver(Driver driver) {
+        drivers.add(driver);
     }
 
-    public void removerConductor(Conductor conductor) {
-        conductores.remove(conductor);
+    public void removeDriver(Driver driver) {
+        drivers.remove(driver);
     }
 }
