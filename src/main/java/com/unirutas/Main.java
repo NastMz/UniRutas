@@ -54,24 +54,24 @@ public class Main {
         busController.getBusInfo(bus1);
 
         // Crear un estudiante
-        Estudiante estudiante = new Estudiante("Pablo Bobadillo", "160004331", "psbobadilla", "123");
-        usuarioController.crearEstudiante(estudiante);
+        Student student = new Student("Pablo Bobadillo", "160004331", "psbobadilla", "123");
+        userController.createUser(student);
 
         // Crear un administrativo
         Administrativo administrativo = new Administrativo("Kevin Martinez", "160004314", "ksmartinez", "321");
         usuarioController.crearAdministrativo(administrativo);
 
         // Actualizar un estudiante (por ejemplo, cambiar su contraseña)
-        estudiante.cambiarContrasena("555");
-        usuarioController.actualizarEstudiante(estudiante);
+        student.changePassword("555");
+        userController.updateUser(student);
 
         // Transacción incorrecta
-        estudiante.cambiarContrasena(null);
-        usuarioController.actualizarEstudiante(estudiante);
+        student.changePassword(null);
+        userController.updateUser(student);
 
         // Actualizar un administrativo (por ejemplo, cambiar su nombre de usuario)
-        administrativo.cambiarContrasena("999");
-        usuarioController.actualizarAdministrativo(administrativo);
+        administrative.changePassword("666");
+        userController.updateUser(administrative);
 
         // Eliminar un estudiante
         // usuarioController.eliminarUsuario(estudiante);

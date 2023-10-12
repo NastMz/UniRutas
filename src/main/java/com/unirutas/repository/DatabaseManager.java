@@ -5,7 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class DatabaseManager {
+public class DatabaseManager implements IDatabaseManager {
     private static DatabaseManager instance;
 
     private Connection connection;
