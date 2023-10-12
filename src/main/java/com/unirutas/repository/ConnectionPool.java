@@ -21,6 +21,12 @@ public class ConnectionPool {
         this.url = config.getUrl();
         this.user = config.getUser();
         this.password = config.getPassword();
+
+        try {
+            Class.forName(config.getDriver());
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     public static synchronized ConnectionPool getInstance() {
