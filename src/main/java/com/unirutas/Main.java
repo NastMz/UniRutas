@@ -5,6 +5,9 @@ import com.unirutas.controllers.JourneyController;
 import com.unirutas.controllers.ServiceController;
 import com.unirutas.controllers.UserController;
 import com.unirutas.models.*;
+import com.unirutas.services.implementation.AdministrativeServices;
+import com.unirutas.services.implementation.StudentServices;
+import com.unirutas.services.interfaces.UserServices;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -14,7 +17,12 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
         // Crear controladores
-        UserController userController = new UserController();
+        UserServices<Student> studentServices = new StudentServices();
+        UserServices<Administrative> administrativeServices = new AdministrativeServices();
+
+        UserController studentController = new UserController(studentServices);
+        UserController adminController = new UserController(administrativeServices);
+
         BusController busController = new BusController();
         JourneyController journeyController = new JourneyController();
 
@@ -55,23 +63,23 @@ public class Main {
 
         // Crear un estudiante
         Student student = new Student("Pablo Bobadillo", "160004331", "psbobadilla", "123");
-        userController.createUser(student);
+        studentController.createUser(student);
 
         // Crear un administrativo
         Administrative administrative = new Administrative("Kevin Martinez", "160004314", "ksmartinez", "321");
-        userController.createUser(administrative);
+        adminController.createUser(administrative);
 
         // Actualizar un estudiante (por ejemplo, cambiar su contraseña)
         student.changePassword("555");
-        userController.updateUser(student);
+        studentController.updateUser(student);
 
         // Transacción incorrecta
         student.changePassword(null);
-        userController.updateUser(student);
+        studentController.updateUser(student);
 
         // Actualizar un administrativo (por ejemplo, cambiar su nombre de usuario)
-        administrative.changePassword("666");
-        userController.updateUser(administrative);
+        administrative.changePassword("123");
+        adminController.updateUser(administrative);
 
         // Eliminar un estudiante
         // userController.eliminarUsuario(estudiante);
