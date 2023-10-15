@@ -1,4 +1,4 @@
-package com.unirutas.repository;
+package com.unirutas.repository.interfaces;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
