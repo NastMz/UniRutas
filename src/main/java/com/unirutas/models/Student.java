@@ -14,6 +14,7 @@ public class Student implements User {
     private String username;
     @Column(name = "password")
     private String password;
+
     public Student(String name, String code, String username, String password) {
         this.name = name;
         this.code = code;

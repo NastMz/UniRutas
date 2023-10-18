@@ -41,15 +41,15 @@ public class Main {
         Coordinate coordinate1 = new Coordinate(1.0, 2.0);
         Coordinate coordinate2 = new Coordinate(3.0, 4.0);
 
-        Stop stop1 = new Stop("Paradero1", "Descripción del paradero 1", coordinate1);
-        Stop stop2 = new Stop("Paradero2", "Descripción del paradero 2", coordinate2);
+        Stop stop1 = new Stop("Paradero1", "Descripción del paradero 1", coordinate1.getId());
+        Stop stop2 = new Stop("Paradero2", "Descripción del paradero 2", coordinate2.getId());
 
         List<Stop> stops = new ArrayList<>(Arrays.asList(stop1, stop2));
-        Journey journey = new Journey(stops, new ArrayList<>());
+        Direction direction = new Direction("Sentido1");
+        Journey journey = new Journey(direction.getId());
 
         // Crear servicio y suscribir estudiante
-        Route route = new Route("Ruta1", journey);
-        Direction direction = new Direction("Sentido1", journey);
+        Route route = new Route("Ruta1", journey.getId());
         ServiceController serviceController = new ServiceController(route, direction);
 
         // Agregar horarios y buses al servicio
@@ -67,7 +67,7 @@ public class Main {
 
         // Asignar conductor a un bus
         Driver driver1 = new Driver("Conductor1", "C001");
-        bus1.assignDriver(driver1);
+        bus1.addDriver(driver1);
 
         // Obtener información de un bus
         busController.getBusInfo(bus1);

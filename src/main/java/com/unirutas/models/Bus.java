@@ -1,17 +1,28 @@
 package com.unirutas.models;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+import com.unirutas.core.annotations.Column;
+import com.unirutas.core.annotations.PrimaryKey;
+import com.unirutas.core.annotations.Table;
 
+@Table(name="Bus")
 public class Bus {
-    private final String plate_number;
+    @PrimaryKey(name = "id")
+    private String id;
+    @Column(name = "plate_number")
+    private final String plateNumber;
+    @Column(name = "capacity")
     private final int capacity;
-    private final List<Driver> drivers;
 
-    public Bus(int capacity, String plate_number) {
+    public Bus(int capacity, String plateNumber) {
+        this.id = String.valueOf(UUID.randomUUID());
         this.capacity = capacity;
-        this.plate_number = plate_number;
-        this.drivers = new ArrayList<>();
+        this.plateNumber = plateNumber;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public int getCapacity() {
@@ -19,18 +30,21 @@ public class Bus {
     }
 
     public String getPlate() {
-        return plate_number;
+        return plateNumber;
     }
 
     public List<Driver> getDrivers() {
-        return drivers;
+        // Obtener la lista de paradas asociadas a este viaje desde la base de datos
+        return DriverBus.getDriversForBus(this.id);
     }
 
-    public void assignDriver(Driver driver) {
-        drivers.add(driver);
+    public void addDriver(Driver driver) {
+        // TODO:
+        DriverBus.assignDriver(this.id, driver.getCode());
     }
 
     public void removeDriver(Driver driver) {
-        drivers.remove(driver);
+        // TODO:
+        DriverBus.removeDriver(this.id, driver.getCode());
     }
 }

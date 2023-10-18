@@ -1,16 +1,35 @@
 package com.unirutas.models;
 
 import java.util.Date;
+import java.util.UUID;
 
+import com.unirutas.core.annotations.Column;
+import com.unirutas.core.annotations.PrimaryKey;
+import com.unirutas.core.annotations.Table;
+
+@Table(name="Alert")
 public class Alert {
+    @PrimaryKey(name = "id")
+    private String id;
+    @Column(name = "date")
     private final Date date;
+    @Column(name = "description")
     private final String description;
-    private final Service service_id;
+    @Column(name = "image")
+    private final String image;
+    @Column(name = "service_id")
+    private final String serviceId;
 
-    public Alert(Date date, String description, Service service) {
+    public Alert(Date date, String description, String image, String serviceId) {
+        this.id = String.valueOf(UUID.randomUUID());
         this.date = date;
         this.description = description;
-        this.service_id = service;
+        this.image = image;
+        this.serviceId = serviceId;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public Date getDate() {
@@ -21,8 +40,8 @@ public class Alert {
         return description;
     }
 
-    public Service getService() {
-        return service_id;
+    public String getService() {
+        return serviceId;
     }
 
  //  public void enviarAlerta(List<User> usuarios) {

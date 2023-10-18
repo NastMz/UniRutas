@@ -20,21 +20,13 @@ public class JourneyController {
         journey.removeStop(stop);
     }
 
-    public void assignStops(List<Stop> stops) {
-        journey.setStopsList(stops);
-    }
-
-    public void createSection(List<Coordinate> coordinates) {
-        Section section = new Section(coordinates);
+    public void createSection() {
+        Section section = new Section();
         journey.addSection(section);
     }
 
     public void removeSection(Section section) {
         journey.removeSection(section);
-    }
-
-    public void assignSections(List<Section> sections) {
-        journey.setSectionsList(sections);
     }
 
     public void removeSections(List<Section> sections) {

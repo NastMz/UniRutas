@@ -1,12 +1,17 @@
 package com.unirutas.models;
 
+import com.unirutas.core.annotations.PrimaryKey;
+import com.unirutas.core.annotations.Table;
+
+@Table(name = "StudentSubscription")
 public class StudentSubscription {
-    private String serviceCode;
+    @PrimaryKey(name = "student_code")
     private String studentCode;
+    @PrimaryKey(name = "service_id")
+    private String serviceId;
 
-    public StudentSubscription(String studentCode, String serviceCode) {
+    public StudentSubscription(String studentCode, String serviceId) {
         this.studentCode = studentCode;
-        this.serviceCode = serviceCode;
+        this.serviceId = serviceId;
     }
-
 }
