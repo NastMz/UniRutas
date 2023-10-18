@@ -14,6 +14,8 @@ public class AdministrativeServices implements UserServices<Administrative> {
 
     public AdministrativeServices() {
         this.administrativeRepository = RepositoryFactoryProvider.getFactory().createRepository(Administrative.class);
+        administrativeRepository.getDatabaseEngineDate();
+        administrativeRepository.getDatabaseEngineHour();
     }
 
     public void create(String name, String code, String username, String password) {
