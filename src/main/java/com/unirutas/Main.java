@@ -4,6 +4,8 @@ import com.unirutas.controllers.BusController;
 import com.unirutas.controllers.JourneyController;
 import com.unirutas.controllers.ServiceController;
 import com.unirutas.controllers.UserController;
+import com.unirutas.core.database.connection.interfaces.IConnectionPool;
+import com.unirutas.core.providers.ConnectionPoolFactoryProvider;
 import com.unirutas.models.*;
 import com.unirutas.services.implementation.AdministrativeServices;
 import com.unirutas.services.implementation.StudentServices;
@@ -13,9 +15,18 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Main {
     public static void main(String[] args) {
+
+        IConnectionPool<?> connectionPool = ConnectionPoolFactoryProvider.getFactory().createConnectionPool();
+
+        Logger mongoLogger = Logger.getLogger( "org.mongodb.driver" );
+        mongoLogger.setLevel(Level.ALL); // e.g. or Log.WARNING, etc.
+
+
         // Crear controladores
         UserServices<Student> studentServices = new StudentServices();
         UserServices<Administrative> administrativeServices = new AdministrativeServices();
@@ -87,5 +98,6 @@ public class Main {
         // Eliminar un administrativo
         // userController.eliminarUsuario(administrativo);
 
+        connectionPool.closeAllConnections();
     }
 }

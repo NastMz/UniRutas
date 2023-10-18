@@ -1,14 +1,14 @@
 package com.unirutas.models;
 
-import com.unirutas.annotations.Column;
-import com.unirutas.annotations.PrimaryKey;
-import com.unirutas.annotations.Table;
+import com.unirutas.core.annotations.Column;
+import com.unirutas.core.annotations.PrimaryKey;
+import com.unirutas.core.annotations.Table;
 
 @Table(name = "Student")
-@PrimaryKey(value = {"code"})
 public class Student implements User {
     @Column(name = "name")
     private String name;
+    @PrimaryKey(name = "code")
     private String code;
     @Column(name = "username")
     private String username;

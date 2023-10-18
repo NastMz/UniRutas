@@ -1,14 +1,20 @@
 package com.unirutas.services.implementation;
 
+import com.unirutas.core.database.repository.interfaces.IRepository;
+import com.unirutas.core.database.repository.utils.PrimaryKeyValues;
+import com.unirutas.core.providers.RepositoryFactoryProvider;
 import com.unirutas.models.Administrative;
-import com.unirutas.repository.implementation.AdministrativeRepository;
-import com.unirutas.repository.interfaces.IRepository;
 import com.unirutas.services.interfaces.UserServices;
 
 import java.util.List;
+import java.util.Map;
 
 public class AdministrativeServices implements UserServices<Administrative> {
-    private final IRepository<Administrative, Object> administrativeRepository = new AdministrativeRepository();
+    private final IRepository<Administrative> administrativeRepository;
+
+    public AdministrativeServices() {
+        this.administrativeRepository = RepositoryFactoryProvider.getFactory().createRepository(Administrative.class);
+    }
 
     public void create(String name, String code, String username, String password) {
         administrativeRepository.save(new Administrative(name, code, username, password));
@@ -19,15 +25,18 @@ public class AdministrativeServices implements UserServices<Administrative> {
     }
 
     public void delete(String code) {
-        administrativeRepository.delete(code);
+        PrimaryKeyValues primaryKeyValues = new PrimaryKeyValues(Map.of("code", code));
+        administrativeRepository.delete(primaryKeyValues);
     }
 
     public Administrative findByCode(String code) {
-        return administrativeRepository.findById(code);
+        PrimaryKeyValues primaryKeyValues = new PrimaryKeyValues(Map.of("code", code));
+        return administrativeRepository.findById(primaryKeyValues);
     }
 
     public boolean existsByCode(String code) {
-        return administrativeRepository.existsById(code);
+        PrimaryKeyValues primaryKeyValues = new PrimaryKeyValues(Map.of("code", code));
+        return administrativeRepository.existsById(primaryKeyValues);
     }
 
     public List<Administrative> findAll() {
