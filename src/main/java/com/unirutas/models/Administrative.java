@@ -1,25 +1,55 @@
 package com.unirutas.models;
 
-import com.unirutas.repository.GenericDTO;
+import com.unirutas.annotations.Column;
+import com.unirutas.annotations.PrimaryKey;
+import com.unirutas.annotations.Table;
 
-import java.util.List;
-
-public class Administrative extends User {
+@Table(name = "Administrative")
+@PrimaryKey(value = {"code"})
+public class Administrative implements User {
+    @Column(name = "name")
+    private String name;
+    private String code;
+    @Column(name = "username")
+    private final String username;
+    @Column(name = "password")
+    private String password;
 
     public Administrative(String name, String code, String username, String password) {
-        super(name, code, username, password);
+        this.name = name;
+        this.code = code;
+        this.username = username;
+        this.password = password;
     }
 
     @Override
-    public void insert(User user) {
-        GenericDTO<Administrative> administrativeDTO = new GenericDTO<>(Administrative.class, "Administrative", List.of("code"));
-        administrativeDTO.insert((Administrative) user);
+    public String getName() {
+        return name;
     }
 
     @Override
-    public void update(User user) {
-        GenericDTO<Administrative> administrativeDTO = new GenericDTO<>(Administrative.class, "Administrative", List.of("code"));
-        administrativeDTO.update((Administrative) user);
+    public void setName(String name) {
+        this.name=name;
+    }
+
+    @Override
+    public String getCode() {
+        return code;
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public void changePassword(String newPassword) {
+        this.password=newPassword;
     }
 }
 

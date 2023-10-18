@@ -1,4 +1,7 @@
-package com.unirutas.repository;
+package com.unirutas.repository.implementation;
+
+import com.unirutas.core.ConnectionPool;
+import com.unirutas.repository.interfaces.IDatabaseManager;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

@@ -1,4 +1,4 @@
-package com.unirutas.repository;
+package com.unirutas.core;
 
 import com.unirutas.config.DatabaseConfig;
 
@@ -21,6 +21,12 @@ public class ConnectionPool {
         this.url = config.getUrl();
         this.user = config.getUser();
         this.password = config.getPassword();
+
+        try {
+            Class.forName(config.getDriver());
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     public static synchronized ConnectionPool getInstance() {
@@ -31,15 +37,14 @@ public class ConnectionPool {
     }
 
     public synchronized Connection getConnection() throws SQLException {
+        Connection connection;
         if (availableConnections.isEmpty()) {
-            Connection connection = DriverManager.getConnection(url, user, password);
-            usedConnections.add(connection);
-            return connection;
+            connection = DriverManager.getConnection(url, user, password);
         } else {
-            Connection connection = availableConnections.remove(availableConnections.size() - 1);
-            usedConnections.add(connection);
-            return connection;
+            connection = availableConnections.remove(availableConnections.size() - 1);
         }
+        usedConnections.add(connection);
+        return connection;
     }
 
     public synchronized void releaseConnection(Connection connection) {
