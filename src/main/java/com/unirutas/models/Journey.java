@@ -1,48 +1,48 @@
 package com.unirutas.models;
 
 import java.util.List;
+import java.util.UUID;
 
 public class Journey {
-    private Direction direction;
-    private List<Stop> stopsList;
-    private List<Section> sectionsList;
+    private UUID id;
+    private UUID directionId;
 
-    public Journey(List<Stop> stopsList, List<Section> sectionsList) {
-        this.stopsList = stopsList;
-        this.sectionsList = sectionsList;
+    public Journey(UUID directionId) {
+        this.id = UUID.randomUUID();
+        this.directionId = directionId;
     }
 
+    public UUID getId() {
+        return id;
+    }
 
     public List<Stop> getStopsList() {
-        return stopsList;
-    }
-
-    public void setStopsList(List<Stop> stopsList) {
-        this.stopsList = stopsList;
+        // Obtener la lista de paradas asociadas a este viaje desde la base de datos
+        return JourneyStop.getStopsForJourney(this.id);
     }
 
     public List<Section> getSectionsList() {
-        return sectionsList;
+        // Obtener la lista de secciones asociadas a este viaje desde la base de datos
+        return JourneySection.getSectionsForJourney(this.id);
     }
-
-    public void setSectionsList(List<Section> sectionsList) {
-        this.sectionsList = sectionsList;
-    }
-
 
     public void addStop(Stop stop) {
-        stopsList.add(stop);
+        // Insertar la parada en la tabla JourneyStop
+        JourneyStop.insertStop(this.id, stop.getId());
     }
 
     public void addSection(Section section) {
-        sectionsList.add(section);
+        // Insertar la sección en la tabla JourneySection
+        JourneySection.insertSection(this.id, section.getId());
     }
 
     public void removeStop(Stop stop) {
-        stopsList.remove(stop);
+        // Eliminar la parada de la tabla JourneyStop
+        JourneyStop.removeStop(this.id, stop.getId());
     }
 
     public void removeSection(Section section) {
-        sectionsList.remove(section);
+        // Eliminar la sección de la tabla JourneySection
+        JourneySection.removeSection(this.id, section.getId());
     }
 }

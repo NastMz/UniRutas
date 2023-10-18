@@ -29,8 +29,8 @@ public class Main {
         Journey journey = new Journey(stops, new ArrayList<>());
 
         // Crear servicio y suscribir estudiante
-        Route route = new Route("Ruta1", journey);
-        Direction direction = new Direction("Sentido1", journey);
+        Route route = new Route("Ruta1", journey.getId());
+        Direction direction = new Direction("Sentido1");
         ServiceController serviceController = new ServiceController(route, direction);
 
         // Agregar horarios y buses al servicio

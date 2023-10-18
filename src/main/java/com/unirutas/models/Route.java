@@ -1,16 +1,19 @@
 package com.unirutas.models;
 
-public class Route {
-    private final String name;
-    private final Journey journey;
+import java.util.UUID;
 
-    public Route(String name, Journey journey) {
+public class Route {
+    private final UUID id;
+    private final String name;
+    private final UUID journeyId;
+
+    public Route(String name, UUID journeyId) {
+        this.id = UUID.randomUUID();
         this.name = name;
-        this.journey = journey;
+        this.journeyId = journeyId;
     }
 
     public String getName() {
         return name;
     }
 }
-

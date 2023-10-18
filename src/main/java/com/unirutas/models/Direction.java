@@ -1,15 +1,17 @@
 package com.unirutas.models;
 
-public class Direction {
-    private final String nombre;
-    private final Journey recorrido;
+import java.util.UUID;
 
-    public Direction(String nombre, Journey recorrido) {
-        this.nombre = nombre;
-        this.recorrido = recorrido;
+public class Direction {
+    private final UUID id;
+    private final String name;
+
+    public Direction(String name) {
+        this.id = UUID.randomUUID();
+        this.name = name;
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getName() {
+        return name;
     }
 }
