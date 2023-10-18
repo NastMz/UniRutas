@@ -2,7 +2,9 @@ package com.unirutas.models;
 
 import java.util.UUID;
 
+@Table(name="Section")
 public class Section {
+    @PrimaryKey(name = "id")
     private String id;
 
     public Section() {

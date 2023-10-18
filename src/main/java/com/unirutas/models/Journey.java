@@ -3,8 +3,13 @@ package com.unirutas.models;
 import java.util.List;
 import java.util.UUID;
 
+@Table(name="Journey")
 public class Journey {
+    @PrimaryKey(name = "id")
     private String id;
+
+    // TODO: Revisar las anotaciones
+    @Column(name = "direction_id")
     private String directionId;
 
     public Journey(String directionId) {

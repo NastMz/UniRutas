@@ -4,9 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Table(name="Coordinate")
 public class Coordinate {
+    @PrimaryKey(name = "id")
     private String id;
+    @Column(name = "latitude")
     private double latitude;
+    @Column(name = "longitude")
     private double longitude;
 
     public Coordinate(double latitude, double longitude) {
