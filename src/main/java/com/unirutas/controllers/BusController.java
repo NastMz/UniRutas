@@ -15,12 +15,16 @@ public class BusController {
 
     public void getBusInfo(Bus bus) {
         // TODO: Implementar la lógica para añadirlo en la DB
-        System.out.println("Placa: " + bus.getPlate());
-        System.out.println("Capacidad: " + bus.getCapacity());
-        System.out.println("Conductores: ");
-        for (Driver driver : bus.getDrivers()) {
-            System.out.println("- Nombre: " + driver.getName());
-            System.out.println("  Documento: " + driver.getCode());
+        if (bus.getDrivers() != null) {
+            System.out.println("Placa: " + bus.getPlate());
+            System.out.println("Capacidad: " + bus.getCapacity());
+            System.out.println("Conductores: ");
+            for (Driver driver : bus.getDrivers()) {
+                System.out.println("- Nombre: " + driver.getName());
+                System.out.println("  Documento: " + driver.getCode());
+            }
+        } else {
+            System.out.println("El autobús no tiene conductores asignados.");
         }
     }
 
