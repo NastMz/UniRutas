@@ -5,17 +5,17 @@ import java.util.List;
 import java.util.UUID;
 
 public class Coordinate {
-    private UUID id;
+    private String id;
     private double latitude;
     private double longitude;
 
     public Coordinate(double latitude, double longitude) {
-        this.id = UUID.randomUUID();
+        this.id = String.valueOf(UUID.randomUUID());
         this.latitude = latitude;
         this.longitude = longitude;
     }
 
-    public UUID getId() {
+    public String getId() {
         return id;
     }
 

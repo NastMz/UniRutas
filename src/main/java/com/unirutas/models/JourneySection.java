@@ -1,29 +1,28 @@
 package com.unirutas.models;
 
 import java.util.List;
-import java.util.UUID;
 
 public class JourneySection {
-    private UUID journeyId;
-    private UUID sectionId;
+    private String journeyId;
+    private String sectionId;
 
-    public JourneySection(UUID journeyId, UUID sectionId) {
+    public JourneySection(String journeyId, String sectionId) {
         this.journeyId = journeyId;
         this.sectionId = sectionId;
     }
 
-    public static List<Section> getSectionsForJourney(UUID journeyId) {
+    public static List<Section> getSectionsForJourney(String journeyId) {
         // Obtener y retornar la lista de secciones asociadas a un viaje desde la base de datos
         // TODO: Implementa esta lógica
         return null;
     }
 
-    public static void insertSection(UUID journeyId, UUID sectionId) {
+    public static void insertSection(String journeyId, String sectionId) {
         // Insertar la sección en la tabla JourneySection
         // TODO: Implementa esta lógica
     }
 
-    public static void removeSection(UUID journeyId, UUID sectionId) {
+    public static void removeSection(String journeyId, String sectionId) {
         // Eliminar la sección de la tabla JourneySection
         // TODO: Implementa esta lógica
     }

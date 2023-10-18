@@ -4,15 +4,15 @@ import java.util.List;
 import java.util.UUID;
 
 public class Journey {
-    private UUID id;
-    private UUID directionId;
+    private String id;
+    private String directionId;
 
-    public Journey(UUID directionId) {
-        this.id = UUID.randomUUID();
+    public Journey(String directionId) {
+        this.id = String.valueOf(UUID.randomUUID());
         this.directionId = directionId;
     }
 
-    public UUID getId() {
+    public String getId() {
         return id;
     }
 

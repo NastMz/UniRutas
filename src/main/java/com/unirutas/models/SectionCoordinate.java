@@ -1,27 +1,26 @@
 package com.unirutas.models;
 
 import java.util.List;
-import java.util.UUID;
 
 public class SectionCoordinate {
-    private UUID sectionId;
-    private UUID coordinateId;
+    private String sectionId;
+    private String coordinateId;
 
-    public SectionCoordinate(UUID sectionId, UUID coordinateId) {
+    public SectionCoordinate(String sectionId, String coordinateId) {
         this.sectionId = sectionId;
         this.coordinateId = coordinateId;
     }
 
-    public static List<SectionCoordinate> getCoordinateForSection(UUID sectionId) {
+    public static List<SectionCoordinate> getCoordinateForSection(String sectionId) {
         // TODO: Lógica para obtener la lista de relaciones desde la base de datos
         return null;
     }
 
-    public static void insertCoordinate(UUID sectionId, UUID coordinateId) {
+    public static void insertCoordinate(String sectionId, String coordinateId) {
         // TODO: Lógica para agregar la relación en la base de datos
     }
 
-    public static void removeCoordinate(UUID sectionId, UUID coordinateId) {
+    public static void removeCoordinate(String sectionId, String coordinateId) {
         // TODO: Lógica para eliminar la relación en la base de datos
     }
 }

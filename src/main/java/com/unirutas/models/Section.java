@@ -3,13 +3,13 @@ package com.unirutas.models;
 import java.util.UUID;
 
 public class Section {
-    private UUID id;
+    private String id;
 
     public Section() {
-        this.id = UUID.randomUUID();
+        this.id = String.valueOf(UUID.randomUUID());
     }
 
-    public UUID getId() {
+    public String getId() {
         return id;
     }
 

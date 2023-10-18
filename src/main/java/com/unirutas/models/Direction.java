@@ -3,11 +3,11 @@ package com.unirutas.models;
 import java.util.UUID;
 
 public class Direction {
-    private final UUID id;
+    private final String id;
     private final String name;
 
     public Direction(String name) {
-        this.id = UUID.randomUUID();
+        this.id = String.valueOf(UUID.randomUUID());
         this.name = name;
     }
 

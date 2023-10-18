@@ -3,12 +3,12 @@ package com.unirutas.models;
 import java.util.UUID;
 
 public class Route {
-    private final UUID id;
+    private final String id;
     private final String name;
-    private final UUID journeyId;
+    private final String journeyId;
 
-    public Route(String name, UUID journeyId) {
-        this.id = UUID.randomUUID();
+    public Route(String name, String journeyId) {
+        this.id = String.valueOf(UUID.randomUUID());
         this.name = name;
         this.journeyId = journeyId;
     }
