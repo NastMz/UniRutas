@@ -63,6 +63,14 @@ public class MongoDBGenericRepository<T> implements IRepository<T> {
         return entity;
     }
 
+    public void getDatabaseEngineDate() {
+        dbManager.getDate();
+    }
+
+    public void getDatabaseEngineHour() {
+        dbManager.getHour();
+    }
+
     public T findById(PrimaryKeyValues id) {
         RepositoryUtils.checkAnnotations(clazz);
 

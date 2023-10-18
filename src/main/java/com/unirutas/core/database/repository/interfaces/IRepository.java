@@ -7,6 +7,16 @@ import java.util.Map;
 
 public interface IRepository<T> {
     /**
+     * Print the database engine date.
+     */
+    void getDatabaseEngineDate();
+
+    /**
+     * Print the database engine hour.
+     */
+    void getDatabaseEngineHour();
+
+    /**
      * Find an entity by its primary key.
      *
      * @param idValues The values of the primary key.

@@ -313,6 +313,14 @@ public class SQLGenericRepository<T> implements IRepository<T> {
         return false;
     }
 
+    public void getDatabaseEngineDate() {
+        dbManager.getDate();
+    }
+
+    public void getDatabaseEngineHour() {
+        dbManager.getHour();
+    }
+
     public T findById(PrimaryKeyValues idValues) {
 
         RepositoryUtils.checkAnnotations(clazz);
