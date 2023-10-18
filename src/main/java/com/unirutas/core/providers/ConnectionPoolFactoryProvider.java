@@ -22,6 +22,7 @@ public class ConnectionPoolFactoryProvider {
     private static final Map<String, IConnectionPoolFactory> factoryMap = createFactoryMap();
 
     public static IConnectionPoolFactory getFactory() {
+        checkDatabaseProperties();
         String databaseEngine = readDatabaseEngineFromProperties();
         IConnectionPoolFactory factory = factoryMap.get(databaseEngine);
         if (factory != null) {
@@ -63,5 +64,32 @@ public class ConnectionPoolFactoryProvider {
             factoryMap.put(type.getEngine(), new NoSQLConnectionPoolFactory());
         }
         return factoryMap;
+    }
+
+    public static void checkDatabaseProperties() {
+        Properties requiredProperties = new Properties();
+        requiredProperties.setProperty("db.host", "");
+        requiredProperties.setProperty("db.port", "");
+        requiredProperties.setProperty("db.database", "");
+        requiredProperties.setProperty("db.user", "");
+        requiredProperties.setProperty("db.password", "");
+        requiredProperties.setProperty("db.engine", "");
+
+        try (InputStream is = ConnectionPoolFactoryProvider.class.getClassLoader().getResourceAsStream("database.properties")) {
+            Properties props = new Properties();
+            props.load(is);
+
+            for (String propertyName : requiredProperties.stringPropertyNames()) {
+                String propertyValue = props.getProperty(propertyName);
+                if (propertyValue == null || propertyValue.trim().isEmpty()) {
+                    String errorMessage = "Missing config property: " + propertyName + " in database.properties";
+                    logger.severe(errorMessage);
+                    throw new IllegalArgumentException(errorMessage);
+                }
+            }
+        } catch (IOException e) {
+            logger.severe("Error reading database.properties file: " + e.getMessage());
+            throw new RuntimeException("Error reading database.properties file: " + e.getMessage(), e);
+        }
     }
 }
