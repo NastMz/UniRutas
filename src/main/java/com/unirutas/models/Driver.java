@@ -1,14 +1,14 @@
 package com.unirutas.models;
 
-import com.unirutas.annotations.Column;
-import com.unirutas.annotations.PrimaryKey;
-import com.unirutas.annotations.Table;
+import com.unirutas.core.annotations.Column;
+import com.unirutas.core.annotations.PrimaryKey;
+import com.unirutas.core.annotations.Table;
 
 @Table(name = "Driver")
-@PrimaryKey({"document_number"})
 public class Driver implements Person {
     @Column(name = "name")
     private String name;
+    @PrimaryKey(name = "document_number")
     private String documentNumber;
 
     public Driver(String name, String documentNumber) {
