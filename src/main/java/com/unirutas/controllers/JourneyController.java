@@ -1,9 +1,9 @@
 package com.unirutas.controllers;
 
 import com.unirutas.models.Coordinate;
-import com.unirutas.models.Stop;
 import com.unirutas.models.Journey;
 import com.unirutas.models.Section;
+import com.unirutas.models.Stop;
 
 import java.util.List;
 
