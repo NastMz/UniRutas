@@ -14,6 +14,8 @@ public class StudentServices implements UserServices<Student> {
 
     public StudentServices() {
         this.studentRepository = RepositoryFactoryProvider.getFactory().createRepository(Student.class);
+        studentRepository.getDatabaseEngineDate();
+        studentRepository.getDatabaseEngineHour();
     }
 
     public void create(String name, String code, String username, String password) {

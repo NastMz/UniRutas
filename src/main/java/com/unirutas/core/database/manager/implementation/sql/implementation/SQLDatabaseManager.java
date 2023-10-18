@@ -4,10 +4,7 @@ import com.unirutas.core.database.connection.implementation.sql.interfaces.ISQLC
 import com.unirutas.core.database.manager.implementation.sql.interfaces.ISQLDatabaseManager;
 import com.unirutas.core.providers.ConnectionPoolFactoryProvider;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -25,11 +22,11 @@ public class SQLDatabaseManager implements ISQLDatabaseManager {
     }
 
     /**
-     * Get the instance of the DatabaseManager.
+     * Get the singleton instance of the database manager.
      *
-     * @return The DatabaseManager instance.
+     * @return The singleton instance of the database manager.
      */
-    public static synchronized SQLDatabaseManager getInstance() {
+    public static SQLDatabaseManager getInstance() {
         if (instance == null) {
             instance = new SQLDatabaseManager();
         }
@@ -49,6 +46,79 @@ public class SQLDatabaseManager implements ISQLDatabaseManager {
     public void disconnect() {
         if (connection != null) {
             connectionPool.releaseConnection(connection);
+        }
+    }
+
+    /**
+     * Get the date from the database engine.
+     * <p>
+     *     We use the CURRENT_DATE function from the database engine.
+     *     A function that is an ANSI SQL standard. It is supported by
+     *     most database engines.
+     */
+    public void getDate() {
+        Statement statement = null;
+        try {
+            connect();
+            statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT CURRENT_DATE");
+
+            if (resultSet.next()) {
+                String message = "Database Engine Date: " + resultSet.getString(1);
+                logger.log(Level.INFO, message);
+            } else {
+                logger.log(Level.WARNING, "No date found in database engine");
+            }
+
+            disconnect();
+        } catch (Exception e) {
+            handleException("Error obtaining date from database engine", e);
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    handleException("Error closing statement", e);
+                }
+            }
+
+            disconnect();
+        }
+    }
+
+    /**
+     * Get the hour from the database engine.
+     * <p>
+     *     We use the CURRENT_TIME function from the database engine.
+     *     A function that is an ANSI SQL standard. It is supported by
+     *     most database engines.
+     */
+    public void getHour() {
+        Statement statement = null;
+        try {
+            connect();
+            statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT CURRENT_TIME");
+
+            if (resultSet.next()) {
+                String message = "Database Engine Hour: " + resultSet.getString(1);
+                logger.log(Level.INFO, message);
+            } else {
+                logger.log(Level.WARNING, "No hour found in database engine");
+            }
+
+            disconnect();
+        } catch (Exception e) {
+            handleException("Error obtaining hour from database engine", e);
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException e) {
+                    handleException("Error closing statement", e);
+                }
+            }
+            disconnect();
         }
     }
 

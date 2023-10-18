@@ -2,6 +2,7 @@ package com.unirutas.core.database.manager.implementation.nosql.implementation;
 
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.unirutas.core.database.connection.interfaces.IConnectionPool;
 import com.unirutas.core.database.manager.implementation.nosql.interfaces.IMongoDBDatabaseManager;
@@ -107,6 +108,47 @@ public class MongoDBDatabaseManager implements IMongoDBDatabaseManager {
     @Override
     public void disconnect() {
         throw new UnsupportedOperationException("This method is not supported for MongoDB");
+    }
+
+    @Override
+    public void getDate() {
+        MongoCollection<Document> tempCollection = database.getCollection("temp");
+
+        // Insert a dummy document
+        Document tempDoc = new Document("temp", "temp");
+        tempCollection.insertOne(tempDoc);
+
+        // Obtaining the date from MongoDB engine
+        Document updateDoc = new Document("$currentDate", new Document("lastModified", true));
+        tempCollection.updateOne(tempDoc, updateDoc);
+        Document resultDoc = tempCollection.find(tempDoc).first();
+
+        String message;
+        if (resultDoc != null) {
+            message = "Database Engine Date: " + resultDoc.get("lastModified");
+            logger.log(Level.INFO, message);
+        } else {
+            message = "Error obtaining date from database engine";
+            logger.log(Level.SEVERE, message);
+        }
+
+        // Delete the dummy document
+        tempCollection.deleteOne(tempDoc);
+
+        // Drop the temp collection
+        database.getCollection("temp").drop();
+    }
+
+    @Override
+    public void getHour() {
+        // Obtaining the hour from MongoDB engine
+        Document command = new Document("serverStatus", 1);
+        Document serverStatus = database.runCommand(command);
+
+        String message = "Database Engine Hour: " + serverStatus.get("localTime");
+
+        logger.log(Level.INFO, message);
+
     }
 
     private void handleException(String message, Exception e) {
