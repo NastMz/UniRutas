@@ -3,6 +3,10 @@ package com.unirutas.models;
 import java.util.Date;
 import java.util.UUID;
 
+import com.unirutas.core.annotations.Column;
+import com.unirutas.core.annotations.PrimaryKey;
+import com.unirutas.core.annotations.Table;
+
 @Table(name="Alert")
 public class Alert {
     @PrimaryKey(name = "id")

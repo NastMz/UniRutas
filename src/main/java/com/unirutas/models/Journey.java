@@ -2,13 +2,14 @@ package com.unirutas.models;
 
 import java.util.List;
 import java.util.UUID;
+import com.unirutas.core.annotations.Column;
+import com.unirutas.core.annotations.PrimaryKey;
+import com.unirutas.core.annotations.Table;
 
 @Table(name="Journey")
 public class Journey {
     @PrimaryKey(name = "id")
     private String id;
-
-    // TODO: Revisar las anotaciones
     @Column(name = "direction_id")
     private String directionId;
 

@@ -1,6 +1,8 @@
 package com.unirutas.models;
 
 import java.util.UUID;
+import com.unirutas.core.annotations.PrimaryKey;
+import com.unirutas.core.annotations.Table;
 
 @Table(name="Section")
 public class Section {

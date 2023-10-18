@@ -1,6 +1,8 @@
 package com.unirutas.models;
 
 import java.util.List;
+import com.unirutas.core.annotations.PrimaryKey;
+import com.unirutas.core.annotations.Table;
 
 @Table(name="DriverBus")
 public class DriverBus {
@@ -14,7 +16,7 @@ public class DriverBus {
         this.busId = busId;
     }
 
-    public List<Driver> getDriversForBus(String busId) {
+    public static List<Driver> getDriversForBus(String busId) {
         // TODO: Implementa esta lógica
         return null;
     }

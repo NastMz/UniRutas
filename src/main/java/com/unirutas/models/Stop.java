@@ -2,6 +2,9 @@ package com.unirutas.models;
 
 import java.util.List;
 import java.util.UUID;
+import com.unirutas.core.annotations.Column;
+import com.unirutas.core.annotations.PrimaryKey;
+import com.unirutas.core.annotations.Table;
 
 @Table(name="Stop")
 public class Stop {
@@ -15,8 +18,6 @@ public class Stop {
     private Section previousSection;
     @Column(name = "next_section")
     private Section nextSection;
-
-    // TODO: ojito con la llave foranea
     @Column(name = "coordinate_id")
     private final String coordinateId;
 

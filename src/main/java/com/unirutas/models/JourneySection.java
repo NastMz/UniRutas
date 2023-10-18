@@ -1,6 +1,8 @@
 package com.unirutas.models;
 
 import java.util.List;
+import com.unirutas.core.annotations.PrimaryKey;
+import com.unirutas.core.annotations.Table;
 
 @Table(name="JourneySection")
 public class JourneySection {

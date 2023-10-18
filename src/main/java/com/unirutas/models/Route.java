@@ -1,6 +1,9 @@
 package com.unirutas.models;
 
 import java.util.UUID;
+import com.unirutas.core.annotations.Column;
+import com.unirutas.core.annotations.PrimaryKey;
+import com.unirutas.core.annotations.Table;
 
 @Table(name="Route")
 public class Route {
@@ -8,8 +11,6 @@ public class Route {
     private final String id;
     @Column(name = "name")
     private final String name;
-
-    // TODO: Revisar las anotaciones
     @Column(name = "journey_id")
     private final String journeyId;
 
@@ -17,6 +18,10 @@ public class Route {
         this.id = String.valueOf(UUID.randomUUID());
         this.name = name;
         this.journeyId = journeyId;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public String getName() {

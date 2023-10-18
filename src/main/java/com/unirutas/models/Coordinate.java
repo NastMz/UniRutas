@@ -3,6 +3,9 @@ package com.unirutas.models;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import com.unirutas.core.annotations.Column;
+import com.unirutas.core.annotations.PrimaryKey;
+import com.unirutas.core.annotations.Table;
 
 @Table(name="Coordinate")
 public class Coordinate {

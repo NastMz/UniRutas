@@ -1,6 +1,10 @@
 package com.unirutas.models;
 
+import java.util.List;
 import java.util.UUID;
+import com.unirutas.core.annotations.Column;
+import com.unirutas.core.annotations.PrimaryKey;
+import com.unirutas.core.annotations.Table;
 
 @Table(name="Bus")
 public class Bus {
@@ -17,12 +21,21 @@ public class Bus {
         this.plateNumber = plateNumber;
     }
 
+    public String getId() {
+        return id;
+    }
+
     public int getCapacity() {
         return capacity;
     }
 
     public String getPlate() {
         return plateNumber;
+    }
+
+    public List<Driver> getDrivers() {
+        // Obtener la lista de paradas asociadas a este viaje desde la base de datos
+        return DriverBus.getDriversForBus(this.id);
     }
 
     public void addDriver(Driver driver) {

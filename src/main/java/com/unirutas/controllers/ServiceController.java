@@ -8,7 +8,7 @@ public class ServiceController {
     private final Service service;
 
     public ServiceController(Route route, Direction direction) {
-        service = new Service(route, direction);
+        service = new Service(route.getId(), direction.getId());
     }
 
     public void assignSchedule(Schedule schedule) {
