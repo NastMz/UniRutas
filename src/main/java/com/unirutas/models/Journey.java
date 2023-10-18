@@ -31,14 +31,14 @@ public class Journey {
         JourneyStop.insertStop(this.id, stop.getId());
     }
 
-    public void addSection(Section section) {
-        // Insertar la sección en la tabla JourneySection
-        JourneySection.insertSection(this.id, section.getId());
-    }
-
     public void removeStop(Stop stop) {
         // Eliminar la parada de la tabla JourneyStop
         JourneyStop.removeStop(this.id, stop.getId());
+    }
+
+    public void addSection(Section section) {
+        // Insertar la sección en la tabla JourneySection
+        JourneySection.insertSection(this.id, section.getId());
     }
 
     public void removeSection(Section section) {
