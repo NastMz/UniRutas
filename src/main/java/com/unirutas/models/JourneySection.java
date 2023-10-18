@@ -4,7 +4,6 @@ import java.util.List;
 
 @Table(name="JourneySection")
 public class JourneySection {
-    // TODO: Revisar las anotaciones
     @PrimaryKey(name = "journey_id")
     private String journeyId;
     @PrimaryKey(name = "section_id")

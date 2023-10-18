@@ -4,7 +4,6 @@ import java.util.List;
 
 @Table(name="SectionCoordinate")
 public class SectionCoordinate {
-    // TODO: Revisar las anotaciones
     @PrimaryKey(name = "section_id")
     private String sectionId;
     @PrimaryKey(name = "coordinate_id")
