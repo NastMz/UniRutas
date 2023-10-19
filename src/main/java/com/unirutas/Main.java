@@ -5,9 +5,12 @@ import com.unirutas.controllers.JourneyController;
 import com.unirutas.controllers.ServiceController;
 import com.unirutas.controllers.UserController;
 import com.unirutas.core.database.connection.interfaces.IConnectionPool;
+import com.unirutas.core.database.manager.interfaces.IDatabaseManager;
+import com.unirutas.core.database.repository.CrudRepository;
 import com.unirutas.core.dependency.injector.implementation.DependencyInjector;
 import com.unirutas.core.dependency.injector.interfaces.IDependencyInjector;
 import com.unirutas.core.providers.ConnectionPoolFactoryProvider;
+import com.unirutas.core.providers.DatabaseManagerFactoryProvider;
 import com.unirutas.models.*;
 import com.unirutas.services.implementation.AdministrativeServices;
 import com.unirutas.services.implementation.StudentServices;
@@ -24,6 +27,11 @@ public class Main {
         IDependencyInjector dependencyInjector = new DependencyInjector();
 
         IConnectionPool<?> connectionPool = ConnectionPoolFactoryProvider.getFactory().createConnectionPool();
+
+        IDatabaseManager databaseManager = DatabaseManagerFactoryProvider.getFactory().createDatabaseManager();
+
+        databaseManager.getDate();
+        databaseManager.getHour();
 
         // Crear controladores
         UserServices<Student> studentServices = new StudentServices();
@@ -98,6 +106,15 @@ public class Main {
 
         // Eliminar un administrativo
         // userController.eliminarUsuario(administrativo);
+
+        // Print all users
+        List<User> users = studentController.findAllUsers();
+        users.addAll(adminController.findAllUsers());
+
+        System.out.println("Usuarios:");
+        for (User user : users) {
+            System.out.println(user.getName() + " " + user.getCode() + " " + user.getUsername() );
+        }
 
         connectionPool.closeAllConnections();
     }
