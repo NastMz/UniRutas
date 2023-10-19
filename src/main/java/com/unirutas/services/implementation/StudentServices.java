@@ -14,12 +14,6 @@ import java.util.Map;
 public class StudentServices implements UserServices<Student> {
     @Inject
     private StudentRepository studentRepository;
-
-//    public StudentServices() {
-//        studentRepository.getDatabaseEngineDate();
-//        studentRepository.getDatabaseEngineHour();
-//    }
-
     public void create(String name, String code, String username, String password) {
         studentRepository.save(new Student(name, code, username, password));
     }

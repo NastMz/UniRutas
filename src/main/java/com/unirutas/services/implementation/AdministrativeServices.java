@@ -17,11 +17,6 @@ public class AdministrativeServices implements UserServices<Administrative> {
     @Inject
     private AdministrativeRepository administrativeRepository;
 
-//    public AdministrativeServices() {
-//        administrativeRepository.getDatabaseEngineDate();
-//        administrativeRepository.getDatabaseEngineHour();
-//    }
-
     public void create(String name, String code, String username, String password) {
         administrativeRepository.save(new Administrative(name, code, username, password));
     }

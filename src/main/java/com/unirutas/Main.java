@@ -5,7 +5,6 @@ import com.unirutas.controllers.JourneyController;
 import com.unirutas.controllers.ServiceController;
 import com.unirutas.controllers.UserController;
 import com.unirutas.core.database.connection.interfaces.IConnectionPool;
-import com.unirutas.core.dependency.annotations.Inject;
 import com.unirutas.core.dependency.injector.implementation.DependencyInjector;
 import com.unirutas.core.dependency.injector.interfaces.IDependencyInjector;
 import com.unirutas.core.providers.ConnectionPoolFactoryProvider;
