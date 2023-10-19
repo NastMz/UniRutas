@@ -2,21 +2,20 @@ package com.unirutas.services.implementation;
 
 import com.unirutas.core.database.repository.interfaces.IRepository;
 import com.unirutas.core.database.repository.utils.PrimaryKeyValues;
+import com.unirutas.core.dependency.annotations.Implementation;
+import com.unirutas.core.dependency.annotations.Inject;
 import com.unirutas.core.providers.RepositoryFactoryProvider;
 import com.unirutas.models.Administrative;
+import com.unirutas.repository.AdministrativeRepository;
 import com.unirutas.services.interfaces.UserServices;
 
 import java.util.List;
 import java.util.Map;
 
+@Implementation
 public class AdministrativeServices implements UserServices<Administrative> {
-    private final IRepository<Administrative> administrativeRepository;
-
-    public AdministrativeServices() {
-        this.administrativeRepository = RepositoryFactoryProvider.getFactory().createRepository(Administrative.class);
-        administrativeRepository.getDatabaseEngineDate();
-        administrativeRepository.getDatabaseEngineHour();
-    }
+    @Inject
+    private AdministrativeRepository administrativeRepository;
 
     public void create(String name, String code, String username, String password) {
         administrativeRepository.save(new Administrative(name, code, username, password));

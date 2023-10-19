@@ -10,6 +10,7 @@ import com.unirutas.core.database.repository.utils.RepositoryUtils;
 import com.unirutas.core.providers.DatabaseManagerFactoryProvider;
 import org.bson.Document;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,13 +45,43 @@ public class MongoDBGenericRepository<T> implements IRepository<T> {
     private T mapDocumentToEntity(Document document) {
         T entity = null;
         try {
-            entity = clazz.getDeclaredConstructor().newInstance();
+
+            // Get fields types to instantiate the entity
+
+            Constructor<?>[] constructors = clazz.getDeclaredConstructors();
+
+            Constructor<?> constructor = null;
+
+            for (Constructor<?> c : constructors) {
+                if (c.getParameterCount() > 0) {
+                    constructor = c;
+                    break;
+                }
+            }
+
+            Class<?>[] fieldsTypes = constructor.getParameterTypes();
+
+            // Set all fields to null to instantiate the entity
+            Object [] fieldsNull = new Object[fieldsTypes.length];
+            for (int i = 0; i < fieldsTypes.length; i++) {
+                fieldsNull[i] = null;
+            }
+
+            entity = clazz.getDeclaredConstructor(fieldsTypes).newInstance(fieldsNull);
+
             Field[] fields = clazz.getDeclaredFields();
 
             for (Field field : fields) {
                 if (field.isAnnotationPresent(Column.class)) {
                     Column columnAnnotation = field.getAnnotation(Column.class);
                     String columnName = columnAnnotation.name();
+                    field.setAccessible(true);
+                    if (document.containsKey(columnName)) {
+                        field.set(entity, document.get(columnName));
+                    }
+                } else if (field.isAnnotationPresent(PrimaryKey.class)) {
+                    PrimaryKey primaryKeyAnnotation = field.getAnnotation(PrimaryKey.class);
+                    String columnName = primaryKeyAnnotation.name();
                     field.setAccessible(true);
                     if (document.containsKey(columnName)) {
                         field.set(entity, document.get(columnName));

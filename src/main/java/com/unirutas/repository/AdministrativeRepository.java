@@ -1,10 +1,10 @@
 package com.unirutas.repository;
 
+import com.unirutas.core.database.repository.CrudRepository;
 import com.unirutas.core.database.repository.implementation.sql.SQLGenericRepository;
+import com.unirutas.core.dependency.annotations.Repository;
 import com.unirutas.models.Administrative;
 
-public class AdministrativeRepository extends SQLGenericRepository<Administrative> {
-    public AdministrativeRepository() {
-        super(Administrative.class);
-    }
+@Repository
+public class AdministrativeRepository extends CrudRepository<Administrative> {
 }

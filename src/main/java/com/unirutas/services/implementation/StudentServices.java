@@ -1,23 +1,19 @@
 package com.unirutas.services.implementation;
 
-import com.unirutas.core.database.repository.interfaces.IRepository;
 import com.unirutas.core.database.repository.utils.PrimaryKeyValues;
-import com.unirutas.core.providers.RepositoryFactoryProvider;
+import com.unirutas.core.dependency.annotations.Implementation;
+import com.unirutas.core.dependency.annotations.Inject;
 import com.unirutas.models.Student;
+import com.unirutas.repository.StudentRepository;
 import com.unirutas.services.interfaces.UserServices;
 
 import java.util.List;
 import java.util.Map;
 
+@Implementation
 public class StudentServices implements UserServices<Student> {
-    private final IRepository<Student> studentRepository;
-
-    public StudentServices() {
-        this.studentRepository = RepositoryFactoryProvider.getFactory().createRepository(Student.class);
-        studentRepository.getDatabaseEngineDate();
-        studentRepository.getDatabaseEngineHour();
-    }
-
+    @Inject
+    private StudentRepository studentRepository;
     public void create(String name, String code, String username, String password) {
         studentRepository.save(new Student(name, code, username, password));
     }
