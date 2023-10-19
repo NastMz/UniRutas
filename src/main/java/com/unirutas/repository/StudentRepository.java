@@ -1,11 +1,9 @@
 package com.unirutas.repository;
 
-import com.unirutas.core.database.repository.implementation.sql.SQLGenericRepository;
+import com.unirutas.core.database.repository.CrudRepository;
+import com.unirutas.core.dependency.annotations.Repository;
 import com.unirutas.models.Student;
 
-public class StudentRepository extends SQLGenericRepository<Student> {
-    public StudentRepository() {
-        super(Student.class);
-    }
-    // TODO: Implements specific methods for Student
+@Repository
+public class StudentRepository extends CrudRepository<Student> {
 }
