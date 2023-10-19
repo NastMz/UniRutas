@@ -3,9 +3,11 @@ package com.unirutas.controllers;
 import com.unirutas.models.User;
 import com.unirutas.services.interfaces.UserServices;
 
+import java.util.List;
+
 public class UserController {
 
-    private UserServices<? extends User> userServices;
+    private final UserServices<? extends User> userServices;
 
     // Inyección de dependencias por constructor
     public UserController(UserServices<? extends User> userServices) {
@@ -19,6 +21,10 @@ public class UserController {
 
     public void updateUser(User user) {
         userServices.update(user.getName(), user.getCode(), user.getUsername(), user.getPassword());
+    }
+
+    public List<User> findAllUsers() {
+        return (List<User>) userServices.findAll();
     }
 
 //    public void marcarAlerta(Alert alerta, User usuario) {

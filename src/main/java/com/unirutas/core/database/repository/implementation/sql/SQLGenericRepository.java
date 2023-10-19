@@ -9,6 +9,7 @@ import com.unirutas.core.database.repository.utils.PrimaryKeyValues;
 import com.unirutas.core.database.repository.utils.RepositoryUtils;
 import com.unirutas.core.providers.DatabaseManagerFactoryProvider;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -70,7 +71,29 @@ public class SQLGenericRepository<T> implements IRepository<T> {
     private T mapResultSetToEntity(ResultSet resultSet) throws SQLException {
         T entity = null;
         try {
-            entity = clazz.getDeclaredConstructor().newInstance();
+
+            // Get fields types to instantiate the entity
+
+            Constructor<?>[] constructors = clazz.getDeclaredConstructors();
+
+            Constructor<?> constructor = null;
+
+            for (Constructor<?> c : constructors) {
+                if (c.getParameterCount() > 0) {
+                    constructor = c;
+                    break;
+                }
+            }
+
+            Class<?>[] fieldsTypes = constructor.getParameterTypes();
+
+            // Set all fields to null to instantiate the entity
+            Object [] fieldsNull = new Object[fieldsTypes.length];
+            for (int i = 0; i < fieldsTypes.length; i++) {
+                fieldsNull[i] = null;
+            }
+
+            entity = clazz.getDeclaredConstructor(fieldsTypes).newInstance(fieldsNull);
 
             Field[] fields = clazz.getDeclaredFields();
             for (Field field : fields) {
