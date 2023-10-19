@@ -5,6 +5,9 @@ import com.unirutas.controllers.JourneyController;
 import com.unirutas.controllers.ServiceController;
 import com.unirutas.controllers.UserController;
 import com.unirutas.core.database.connection.interfaces.IConnectionPool;
+import com.unirutas.core.dependency.annotations.Inject;
+import com.unirutas.core.dependency.injector.implementation.DependencyInjector;
+import com.unirutas.core.dependency.injector.interfaces.IDependencyInjector;
 import com.unirutas.core.providers.ConnectionPoolFactoryProvider;
 import com.unirutas.models.*;
 import com.unirutas.services.implementation.AdministrativeServices;
@@ -15,21 +18,20 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Main {
     public static void main(String[] args) {
 
+        IDependencyInjector dependencyInjector = new DependencyInjector();
+
         IConnectionPool<?> connectionPool = ConnectionPoolFactoryProvider.getFactory().createConnectionPool();
-
-        Logger mongoLogger = Logger.getLogger( "org.mongodb.driver" );
-        mongoLogger.setLevel(Level.ALL); // e.g. or Log.WARNING, etc.
-
 
         // Crear controladores
         UserServices<Student> studentServices = new StudentServices();
         UserServices<Administrative> administrativeServices = new AdministrativeServices();
+
+        dependencyInjector.injectDependencies(studentServices);
+        dependencyInjector.injectDependencies(administrativeServices);
 
         UserController studentController = new UserController(studentServices);
         UserController adminController = new UserController(administrativeServices);
