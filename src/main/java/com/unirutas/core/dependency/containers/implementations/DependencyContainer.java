@@ -3,21 +3,23 @@ package com.unirutas.core.dependency.containers.implementations;
 import com.unirutas.core.dependency.annotations.*;
 import com.unirutas.core.dependency.containers.interfaces.IDependencyContainer;
 import com.unirutas.core.dependency.utils.DependencyScanner;
+import com.unirutas.core.utils.ClasspathScanner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 public class DependencyContainer implements IDependencyContainer {
-    private Map<Class<?>, Object> singletonInstances;
-    private Map<Class<?>, Object> factoryInstances;
-    private Map<Class<?>, Object> implementations;
-    private Map<Class<?>, Object> repositories;
-    private Map<Class<?>, Object> injects;
+    private final Map<Class<?>, Object> singletonInstances;
+    private final Map<Class<?>, Object> factoryInstances;
+    private final Map<Class<?>, Object> implementations;
+    private final Map<Class<?>, Object> repositories;
+    private final Map<Class<?>, Object> injects;
     private static DependencyContainer instance;
-    private static final Logger logger = Logger.getLogger(DependencyContainer.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(DependencyContainer.class);
 
     private DependencyContainer() {
         singletonInstances = new HashMap<>();
@@ -27,6 +29,25 @@ public class DependencyContainer implements IDependencyContainer {
         injects = new HashMap<>();
         List<Class<?>> classes = DependencyScanner.scanClasses();
         initializeContainer(classes);
+        for (Object clazz : injects.values()) {
+            initializeSubDependency(clazz);
+        }
+
+        for (Object clazz : implementations.values()) {
+            initializeSubDependency(clazz);
+        }
+
+        for (Object clazz : repositories.values()) {
+            initializeSubDependency(clazz);
+        }
+
+        for (Object clazz : singletonInstances.values()) {
+            initializeSubDependency(clazz);
+        }
+
+        for (Object clazz : factoryInstances.values()) {
+            initializeSubDependency(clazz);
+        }
     }
 
     public static DependencyContainer getInstance() {
@@ -49,6 +70,41 @@ public class DependencyContainer implements IDependencyContainer {
                 initializeInject(clazz);
             } else if (clazz.isAnnotationPresent(Implementation.class)) {
                 initializeImplementation(clazz);
+            } else {
+                try {
+                    injects.put(clazz, clazz.getDeclaredConstructor().newInstance());
+                } catch (Exception e) {
+                    String message = "Error initializing inject instance of class " + clazz.getName();
+                    logger.error(message);
+                    throw new RuntimeException(message, e);
+                }
+            }
+        }
+    }
+
+    public void initializeSubDependency(Object clazz) {
+        Field[] fields = clazz.getClass().getDeclaredFields();
+
+        for (Field field : fields) {
+            if (field.isAnnotationPresent(Inject.class)) {
+                String implementationClassName = field.getAnnotation(Inject.class).value();
+                field.setAccessible(true);
+                try {
+                    if (!implementationClassName.isEmpty()) {
+                        Class<?> fieldClass = ClasspathScanner.getClass(implementationClassName);
+                        Object dependencyClass = getDependency(fieldClass);
+                        field.set(clazz, dependencyClass);
+                    } else {
+                        Class<?> fieldClass = ClasspathScanner.getClass(field.getType().getName());
+                        Object dependencyClass = getDependency(fieldClass);
+
+                        field.set(clazz, dependencyClass);
+                    }
+                } catch (IllegalAccessException e) {
+                    String message = "Error injecting dependency in class" + clazz.getClass().getSimpleName() + ". Field " + field.getName() + " is not accessible.";
+                    logger.error(message);
+                    throw new RuntimeException(message, e);
+                }
             }
         }
     }
@@ -65,7 +121,7 @@ public class DependencyContainer implements IDependencyContainer {
             }
         } catch (Exception e) {
             String message = "Error initializing singleton instance of class " + clazz.getName();
-            logger.severe(message);
+            logger.error(message);
             throw new RuntimeException(message, e);
         }
     }
@@ -82,7 +138,7 @@ public class DependencyContainer implements IDependencyContainer {
             }
         } catch (Exception e) {
             String message = "Error initializing factory instance of class " + clazz.getName();
-            logger.severe(message);
+            logger.error(message);
             throw new RuntimeException(message, e);
         }
     }
@@ -92,7 +148,7 @@ public class DependencyContainer implements IDependencyContainer {
             repositories.put(clazz, clazz.getDeclaredConstructor().newInstance());
         } catch (Exception e) {
             String message = "Error initializing repository instance of class " + clazz.getName();
-            logger.severe(message);
+            logger.error(message);
             throw new RuntimeException(message, e);
         }
     }
@@ -102,7 +158,7 @@ public class DependencyContainer implements IDependencyContainer {
             injects.put(clazz, clazz.getDeclaredConstructor().newInstance());
         } catch (Exception e) {
             String message = "Error initializing inject instance of class " + clazz.getName();
-            logger.severe(message);
+            logger.error(message);
             throw new RuntimeException(message, e);
         }
     }
@@ -112,7 +168,7 @@ public class DependencyContainer implements IDependencyContainer {
             implementations.put(clazz, clazz.getDeclaredConstructor().newInstance());
         } catch (Exception e) {
             String message = "Error initializing implementation instance of class " + clazz.getName();
-            logger.severe(message);
+            logger.error(message);
             throw new RuntimeException(message, e);
         }
     }
@@ -130,7 +186,7 @@ public class DependencyContainer implements IDependencyContainer {
             return implementations.get(clazz);
         } else {
             String message = "Error getting dependency of class " + clazz.getName() + ". Dependency not found.";
-            logger.severe(message);
+            logger.error(message);
             throw new RuntimeException(message);
         }
     }
