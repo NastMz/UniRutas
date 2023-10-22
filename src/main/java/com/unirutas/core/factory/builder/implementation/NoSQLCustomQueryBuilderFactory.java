@@ -1,31 +1,23 @@
-package com.unirutas.core.factory.connection.implementation;
+package com.unirutas.core.factory.builder.implementation;
 
-import com.unirutas.core.database.connection.interfaces.IConnectionPool;
-import com.unirutas.core.database.enums.SQLDatabaseEngine;
-import com.unirutas.core.factory.connection.interfaces.IConnectionPoolFactory;
+import com.unirutas.core.builder.query.implementation.sql.SQLCustomQueryBuilder;
+import com.unirutas.core.builder.query.interfaces.ICustomQueryBuilder;
 import com.unirutas.core.database.enums.NoSQLDatabaseEngine;
+import com.unirutas.core.database.enums.SQLDatabaseEngine;
+import com.unirutas.core.factory.builder.interfaces.ICustomQueryBuilderFactory;
 import com.unirutas.core.utils.ClasspathScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Properties;
 
-public class NoSQLConnectionPoolFactory implements IConnectionPoolFactory {
-
-    private static final Logger logger = LoggerFactory.getLogger(NoSQLConnectionPoolFactory.class);
-
-    @Override
-    public IConnectionPool<?> createConnectionPool() {
-        String databaseEngine = readDatabaseEngineFromProperties();
-
-        return createNoSQLConnectionPool(databaseEngine);
-    }
-
-    private String readDatabaseEngineFromProperties() {
+public class NoSQLCustomQueryBuilderFactory implements ICustomQueryBuilderFactory {
+    private static final Logger logger = LoggerFactory.getLogger(NoSQLCustomQueryBuilderFactory.class);
+    public ICustomQueryBuilder<?> createCustomQueryBuilder(Class<?> clazz) {
         try (InputStream is = getClass().getClassLoader().getResourceAsStream("database.properties")) {
             if (is == null) {
                 throw new IOException("Database properties file not found.");
@@ -33,7 +25,7 @@ public class NoSQLConnectionPoolFactory implements IConnectionPoolFactory {
 
             Properties props = new Properties();
             props.load(is);
-            return props.getProperty("db.engine");
+            return createCustomQueryBuilder(props.getProperty("db.engine"), clazz);
         } catch (IOException e) {
             // Log the exception and rethrow with a more informative message.
             String errorMessage = "Error loading database configuration: " + e.getMessage();
@@ -42,21 +34,21 @@ public class NoSQLConnectionPoolFactory implements IConnectionPoolFactory {
         }
     }
 
-    private IConnectionPool<?> createNoSQLConnectionPool(String databaseEngine) {
+    private ICustomQueryBuilder<?> createCustomQueryBuilder(String databaseEngine, Class<?> clazz) {
         try {
             NoSQLDatabaseEngine noSQLDatabaseEngine = NoSQLDatabaseEngine.valueOf(databaseEngine.toUpperCase());
 
-            Class<?> connectionClass = ClasspathScanner.getClass(noSQLDatabaseEngine.getConnection());
+            Class<?> customQueryBuilderClass = ClasspathScanner.getClass(noSQLDatabaseEngine.getCustomQueryBuilder());
 
-            if (connectionClass != null) {
-                Method getInstanceMethod = connectionClass.getMethod("getInstance");
-                return (IConnectionPool<?>) getInstanceMethod.invoke(null);
+            if (customQueryBuilderClass != null) {
+                Constructor<ICustomQueryBuilder<?>> constructor = (Constructor<ICustomQueryBuilder<?>>) customQueryBuilderClass.getDeclaredConstructor(clazz.getClass());
+                return constructor.newInstance(clazz);
             } else {
-                throw new ClassNotFoundException("Connection pool class not found: " + noSQLDatabaseEngine.getConnection());
+                throw new ClassNotFoundException("Custom query builder class not found: " + noSQLDatabaseEngine.getCustomQueryBuilder());
             }
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | ClassNotFoundException ex) {
             // Log the exception and rethrow with a more informative message.
-            String errorMessage = "Error creating NoSQL database connection pool: " + ex.getMessage();
+            String errorMessage = "Error creating NoSQL custom query builder: " + ex.getMessage();
             logger.error(errorMessage);
             throw new RuntimeException(errorMessage, ex);
         } catch (IllegalArgumentException e) {
@@ -67,10 +59,10 @@ public class NoSQLConnectionPoolFactory implements IConnectionPoolFactory {
             for (NoSQLDatabaseEngine db : NoSQLDatabaseEngine.values()) {
                 supportedDatabases.append(db.getEngine()).append(", ");
             }
-
-            // Throw an exception with a more descriptive message.
-            throw new IllegalArgumentException("Invalid database engine: " + databaseEngine +
-                    ". Supported engines are: " + supportedDatabases);
+            throw new IllegalArgumentException("Unsupported database engine: " + databaseEngine +
+                    ". Supported database engines are: " + supportedDatabases.toString());
+        } catch (InstantiationException e) {
+            throw new RuntimeException(e);
         }
     }
 }

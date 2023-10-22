@@ -1,12 +1,13 @@
 package com.unirutas.core.database.config.implementation.nosql.implementation;
 
 import com.unirutas.core.database.config.implementation.nosql.interfaces.IMongoDBDatabaseConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class MongoDBConfig implements IMongoDBDatabaseConfig {
     private static MongoDBConfig instance;
@@ -15,7 +16,7 @@ public class MongoDBConfig implements IMongoDBDatabaseConfig {
     private String password;
     private String connectionString;
 
-    private static final Logger logger = Logger.getLogger(MongoDBConfig.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(MongoDBConfig.class);
 
     private MongoDBConfig() {
         try (InputStream is = getClass().getClassLoader().getResourceAsStream("database.properties")) {
@@ -64,7 +65,7 @@ public class MongoDBConfig implements IMongoDBDatabaseConfig {
     }
 
     private void handleException(String message, Exception e) {
-        logger.log(Level.SEVERE, message, e);
+        logger.error(message);
         throw new RuntimeException(message, e);
     }
 }

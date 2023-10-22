@@ -3,10 +3,10 @@ package com.unirutas.core.database.manager.implementation.sql.implementation;
 import com.unirutas.core.database.connection.implementation.sql.interfaces.ISQLConnectionPool;
 import com.unirutas.core.database.manager.implementation.sql.interfaces.ISQLDatabaseManager;
 import com.unirutas.core.providers.ConnectionPoolFactoryProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * A class to manage database operations.
@@ -15,7 +15,7 @@ public class SQLDatabaseManager implements ISQLDatabaseManager {
     private static SQLDatabaseManager instance;
     private Connection connection;
     private final ISQLConnectionPool connectionPool;
-    private static final Logger logger = Logger.getLogger(SQLDatabaseManager.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(SQLDatabaseManager.class);
 
     private SQLDatabaseManager() {
         connectionPool = (ISQLConnectionPool) ConnectionPoolFactoryProvider.getFactory().createConnectionPool();
@@ -65,9 +65,9 @@ public class SQLDatabaseManager implements ISQLDatabaseManager {
 
             if (resultSet.next()) {
                 String message = "Database Engine Date: " + resultSet.getString(1);
-                logger.log(Level.INFO, message);
+                logger.info(message);
             } else {
-                logger.log(Level.WARNING, "No date found in database engine");
+                logger.warn("No date found in database engine");
             }
 
             disconnect();
@@ -102,9 +102,9 @@ public class SQLDatabaseManager implements ISQLDatabaseManager {
 
             if (resultSet.next()) {
                 String message = "Database Engine Hour: " + resultSet.getString(1);
-                logger.log(Level.INFO, message);
+                logger.info(message);
             } else {
-                logger.log(Level.WARNING, "No hour found in database engine");
+                logger.warn("No hour found in database engine");
             }
 
             disconnect();
@@ -208,6 +208,6 @@ public class SQLDatabaseManager implements ISQLDatabaseManager {
     }
 
     private void handleException(String message, Exception e) {
-        logger.log(Level.SEVERE, message, e);
+        logger.error(message, e);
     }
 }

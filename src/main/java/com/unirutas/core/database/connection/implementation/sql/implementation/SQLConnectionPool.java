@@ -4,18 +4,18 @@ import com.unirutas.core.database.config.implementation.sql.interfaces.ISQLDatab
 import com.unirutas.core.database.connection.implementation.sql.interfaces.ISQLConnectionPool;
 import com.unirutas.core.database.connection.interfaces.IConnectionPool;
 import com.unirutas.core.providers.DatabaseConfigFactoryProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class SQLConnectionPool implements ISQLConnectionPool {
 
-    private static final Logger logger = Logger.getLogger(SQLConnectionPool.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(SQLConnectionPool.class);
     private static SQLConnectionPool instance;
     private final String url;
     private final String user;
@@ -68,7 +68,7 @@ public class SQLConnectionPool implements ISQLConnectionPool {
                 wait(100);
             } catch (InterruptedException e) {
                 // Handle interruption
-                logger.log(Level.WARNING, "Thread was interrupted while waiting for a connection to be available to perform the operation");
+                logger.warn("Thread was interrupted while waiting for a connection to be available to perform the operation");
                 Thread.currentThread().interrupt(); // Restore the interrupted status
                 return null;
             }
@@ -95,14 +95,14 @@ public class SQLConnectionPool implements ISQLConnectionPool {
             try {
                 connection.close();
             } catch (SQLException e) {
-                logger.log(Level.SEVERE, "Error closing connection", e);
+                logger.error( "Error closing connection", e);
             }
         }
         connections.clear();
     }
 
     private void handleException(String message, Exception e) {
-        logger.log(Level.SEVERE, message, e);
+        logger.error(message);
         throw new RuntimeException(message, e);
     }
 }

@@ -2,15 +2,16 @@ package com.unirutas.core.dependency.validators;
 
 import com.unirutas.core.database.repository.CrudRepository;
 import com.unirutas.core.dependency.annotations.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class DependencyValidator {
-    private static final Logger logger = Logger.getLogger(DependencyValidator.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(DependencyValidator.class);
 
     public static void validate(List<Class<?>> classes) {
         for (Class<?> clazz : classes) {
@@ -25,7 +26,7 @@ public class DependencyValidator {
         if (field.isAnnotationPresent(Inject.class)) {
             if (field.getType().isPrimitive()) {
                 String message = "The field " + field.getName() + " of the class " + field.getDeclaringClass().getName() + " annotated with @Inject is a primitive type. The field must be a class";
-                logger.warning(message);
+                logger.warn(message);
                 throw new RuntimeException(message);
             }
         }
@@ -43,12 +44,12 @@ public class DependencyValidator {
         if (clazz.isAnnotationPresent(Repository.class)) {
             if (!CrudRepository.class.isAssignableFrom(clazz)) {
                 String message = "The class " + clazz.getName() + " annotated with @Repository must extends CrudRepository";
-                logger.warning(message);
+                logger.warn(message);
                 throw new RuntimeException(message);
             }
         } else if (CrudRepository.class.isAssignableFrom(clazz)) {
             String message = "The class " + clazz.getName() + " extends CrudRepository but is not annotated with @Repository";
-            logger.warning(message);
+            logger.warn(message);
             throw new RuntimeException(message);
         }
     }
@@ -81,14 +82,14 @@ public class DependencyValidator {
                     // Check if the factory method has no parameters
                     if (method.getParameterCount() > 0) {
                         String message = "The method " + method.getName() + " of the class " + clazz.getName() + " annotated with @FactoryMethod has parameters. The factory method must have no parameters";
-                        logger.warning(message);
+                        logger.warn(message);
                         throw new RuntimeException(message);
                     }
 
                     // Check if the factory method is static
                     if (!java.lang.reflect.Modifier.isStatic(method.getModifiers())) {
                         String message = "The method " + method.getName() + " of the class " + clazz.getName() + " annotated with @FactoryMethod is not static. The factory method must be static";
-                        logger.warning(message);
+                        logger.warn(message);
                         throw new RuntimeException(message);
                     }
 
@@ -99,24 +100,24 @@ public class DependencyValidator {
                     // Check if the return type of the factory method is a class, because it can be a primitive type
                     if (returnType.isPrimitive()) {
                         String message = "The class " + clazz.getName() + " annotated with @Factory has a factory method that returns a primitive type. The factory method must return a class";
-                        logger.warning(message);
+                        logger.warn(message);
                         throw new RuntimeException(message);
                     }
 
                 } catch (SecurityException | IllegalAccessException | IllegalArgumentException |
                          InvocationTargetException e) {
                     String message = "Error validating the class " + clazz.getName() + " annotated with @Factory";
-                    logger.warning(message);
+                    logger.warn(message);
                     throw new RuntimeException(message, e);
                 }
 
                 if (count > 1) {
                     String message = "The class " + clazz.getName() + " annotated with @Factory has more than one method annotated with @FactoryMethod";
-                    logger.warning(message);
+                    logger.warn(message);
                     throw new RuntimeException(message);
                 } else if (count == 0) {
                     String message = "The class " + clazz.getName() + " annotated with @Factory has no method annotated with @FactoryMethod";
-                    logger.warning(message);
+                    logger.warn(message);
                     throw new RuntimeException(message);
                 }
             }
@@ -147,14 +148,14 @@ public class DependencyValidator {
                     // Check if the factory method has no parameters
                     if (method.getParameterCount() > 0) {
                         String message = "The method " + method.getName() + " of the class " + clazz.getName() + " annotated with @SingletonMethod has parameters. The singleton method must have no parameters";
-                        logger.warning(message);
+                        logger.warn(message);
                         throw new RuntimeException(message);
                     }
 
                     // Check if the factory method is static
                     if (!java.lang.reflect.Modifier.isStatic(method.getModifiers())) {
                         String message = "The method " + method.getName() + " of the class " + clazz.getName() + " annotated with @SingletonMethod is not static. The singleton method must be static";
-                        logger.warning(message);
+                        logger.warn(message);
                         throw new RuntimeException(message);
                     }
 
@@ -165,25 +166,25 @@ public class DependencyValidator {
                     // Check if the return type of the factory method is a class, because it can be a primitive type
                     if (returnType.isPrimitive()) {
                         String message = "The class " + clazz.getName() + " annotated with @Singleton has a singleton method that returns a primitive type. The singleton method must return a class";
-                        logger.warning(message);
+                        logger.warn(message);
                         throw new RuntimeException(message);
                     }
 
                 } catch (SecurityException | IllegalAccessException | IllegalArgumentException |
                          InvocationTargetException e) {
                     String message = "Error validating the class " + clazz.getName() + " annotated with @Singleton";
-                    logger.warning(message);
+                    logger.warn(message);
                     throw new RuntimeException(message, e);
                 }
             }
 
             if (count > 1) {
                 String message = "The class " + clazz.getName() + " annotated with @Singleton has more than one method annotated with @SingletonMethod";
-                logger.warning(message);
+                logger.warn(message);
                 throw new RuntimeException(message);
             } else if (count == 0) {
                 String message = "The class " + clazz.getName() + " annotated with @Singleton has no method annotated with @SingletonMethod";
-                logger.warning(message);
+                logger.warn(message);
                 throw new RuntimeException(message);
             }
 
@@ -194,7 +195,7 @@ public class DependencyValidator {
         if (clazz.isAnnotationPresent(Implementation.class)) {
             if (clazz.isInterface()) {
                 String message = "The class " + clazz.getName() + " annotated with @Implementation is an interface. The class must be a class, not an interface";
-                logger.warning(message);
+                logger.warn(message);
                 throw new RuntimeException(message);
             }
 
@@ -203,14 +204,14 @@ public class DependencyValidator {
 
             if (interfaces.length == 0) {
                 String message = "The class " + clazz.getName() + " annotated with @Implementation does not implement any interface. The class must implement an interface";
-                logger.warning(message);
+                logger.warn(message);
                 throw new RuntimeException(message);
             }
 
             // Check if the class implements only one interface
             if (interfaces.length > 1) {
                 String message = "The class " + clazz.getName() + " annotated with @Implementation implements more than one interface. The class must implement only one interface";
-                logger.warning(message);
+                logger.warn(message);
                 throw new RuntimeException(message);
             }
         }

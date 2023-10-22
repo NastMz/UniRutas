@@ -3,17 +3,18 @@ package com.unirutas.core.database.repository.utils;
 import com.unirutas.core.annotations.Column;
 import com.unirutas.core.annotations.PrimaryKey;
 import com.unirutas.core.annotations.Table;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
 
 public class RepositoryUtils {
 
-    private static final Logger logger = Logger.getLogger(RepositoryUtils.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(RepositoryUtils.class);
 
     /**
      * Get the values of the primary key of an entity.
@@ -34,7 +35,7 @@ public class RepositoryUtils {
                 }
             }
         } catch (IllegalAccessException e) {
-            logger.severe("Error getting primary key values: " + e.getMessage());
+            logger.error("Error getting primary key values: " + e.getMessage());
         }
 
         if (primaryKeyValues.isEmpty()) {

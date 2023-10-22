@@ -3,18 +3,18 @@ package com.unirutas.core.dependency.utils;
 import com.unirutas.core.dependency.annotations.*;
 import com.unirutas.core.dependency.validators.DependencyValidator;
 import com.unirutas.core.utils.ClasspathScanner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class DependencyScanner {
 
-    private static final Logger logger = Logger.getLogger(DependencyScanner.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(DependencyScanner.class);
     private static final String classpath = System.getProperty("java.class.path");
     private static final String[] classpathEntries = classpath.split(System.getProperty("path.separator"));
 
@@ -50,7 +50,7 @@ public class DependencyScanner {
 
                                     if (injectClass == null) {
                                         String message = "Error initializing inject instance of class " + fieldClass.getSimpleName() + ". Class " + implementationClassName + " not found.";
-                                        logger.severe(message);
+                                        logger.error(message);
                                         throw new RuntimeException(message);
                                     } else {
                                         implementationClass = injectClass;
@@ -96,7 +96,7 @@ public class DependencyScanner {
                         classNames.add(Class.forName(className));
                     } catch (ClassNotFoundException e) {
                         // Log the exception with context.
-                        logger.log(Level.WARNING, "Class not found: " + className, e);
+                        logger.warn("Class not found: " + className, e);
                     }
                 }
             }

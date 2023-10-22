@@ -1,14 +1,14 @@
 package com.unirutas.core.database.config.implementation.sql.implementation;
 
 import com.unirutas.core.database.config.implementation.sql.interfaces.ISQLDatabaseConfig;
-import com.unirutas.core.database.enums.NoSQLDatabaseEngine;
 import com.unirutas.core.database.enums.SQLDatabaseEngine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class SQLDatabaseConfig implements ISQLDatabaseConfig {
     private static SQLDatabaseConfig instance;
@@ -20,7 +20,7 @@ public class SQLDatabaseConfig implements ISQLDatabaseConfig {
     private String driver;
     private String url;
 
-    private static final Logger logger = Logger.getLogger(SQLDatabaseConfig.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(SQLDatabaseConfig.class);
 
     private SQLDatabaseConfig() {
         try (InputStream is = getClass().getClassLoader().getResourceAsStream("database.properties")) {
@@ -81,7 +81,7 @@ public class SQLDatabaseConfig implements ISQLDatabaseConfig {
     }
 
     private void handleException(String message, Exception e) {
-        logger.log(Level.SEVERE, message, e);
+        logger.error(message);
         throw new RuntimeException(message, e);
     }
 }

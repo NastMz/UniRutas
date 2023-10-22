@@ -5,15 +5,16 @@ import com.unirutas.core.database.enums.SQLDatabaseEngine;
 import com.unirutas.core.database.repository.interfaces.IRepository;
 import com.unirutas.core.factory.repository.interfaces.IRepositoryFactory;
 import com.unirutas.core.utils.ClasspathScanner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.util.Properties;
-import java.util.logging.Logger;
 
 public class NoSQLRepositoryFactory implements IRepositoryFactory {
-    private static final Logger logger = Logger.getLogger(NoSQLRepositoryFactory.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(NoSQLRepositoryFactory.class);
 
     @Override
     public <T> IRepository<T> createRepository(Class<T> entityClass) {
@@ -33,7 +34,7 @@ public class NoSQLRepositoryFactory implements IRepositoryFactory {
         } catch (IOException e) {
             // Log the exception and rethrow with a more informative message.
             String errorMessage = "Error loading database configuration: " + e.getMessage();
-            logger.severe(errorMessage);
+            logger.error(errorMessage);
             throw new RuntimeException(errorMessage, e);
         }
     }
@@ -54,7 +55,7 @@ public class NoSQLRepositoryFactory implements IRepositoryFactory {
         } catch (ReflectiveOperationException ex) {
             // Log the exception and rethrow with a more informative message.
             String errorMessage = "Error creating NoSQL database repository: " + ex.getMessage();
-            logger.severe(errorMessage);
+            logger.error(errorMessage);
             throw new RuntimeException(errorMessage, ex);
         } catch (IllegalArgumentException e) {
             StringBuilder supportedEngines = new StringBuilder();

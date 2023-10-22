@@ -7,14 +7,15 @@ import com.unirutas.core.database.manager.implementation.sql.implementation.SQLD
 import com.unirutas.core.database.repository.interfaces.IRepository;
 import com.unirutas.core.database.repository.utils.PrimaryKeyValues;
 import com.unirutas.core.database.repository.utils.RepositoryUtils;
+import com.unirutas.core.database.repository.utils.SQLRepositoryUtils;
 import com.unirutas.core.providers.DatabaseManagerFactoryProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.logging.Logger;
 
 /**
  * Class to manage generic repository operations.
@@ -25,12 +26,12 @@ public class SQLGenericRepository<T> implements IRepository<T> {
     private final SQLDatabaseManager dbManager;
     private final Class<T> clazz; // The class of the entity
     private final String tableName; // Name of the table in the database
-    private final Logger logger = Logger.getLogger(SQLGenericRepository.class.getName());
+    private final Logger logger = LoggerFactory.getLogger(SQLGenericRepository.class);
 
     public SQLGenericRepository(Class<T> clazz) {
         this.dbManager = (SQLDatabaseManager) DatabaseManagerFactoryProvider.getFactory().createDatabaseManager();
         this.clazz = clazz;
-        this.tableName = getTableName(clazz);
+        this.tableName = SQLRepositoryUtils.getTableName(clazz);
     }
 
     /**
@@ -47,82 +48,13 @@ public class SQLGenericRepository<T> implements IRepository<T> {
         dbManager.disconnect();
     }
 
-    /**
-     * Get the name of the table in the database.
-     *
-     * @param clazz The class of the entity.
-     * @return The name of the table in the database if the entity is annotated with @Table, null otherwise.
-     */
-    private String getTableName(Class<?> clazz) {
-        if (clazz.isAnnotationPresent(Table.class)) {
-            Table tableAnnotation = clazz.getAnnotation(Table.class);
-            return tableAnnotation.name();
-        }
-        return null;
-    }
-
-    /**
-     * Map a ResultSet to an entity.
-     *
-     * @param resultSet The ResultSet.
-     * @return The entity.
-     * @throws SQLException If an error occurs while mapping the ResultSet.
-     */
-    private T mapResultSetToEntity(ResultSet resultSet) throws SQLException {
-        T entity = null;
-        try {
-
-            // Get fields types to instantiate the entity
-
-            Constructor<?>[] constructors = clazz.getDeclaredConstructors();
-
-            Constructor<?> constructor = null;
-
-            for (Constructor<?> c : constructors) {
-                if (c.getParameterCount() > 0) {
-                    constructor = c;
-                    break;
-                }
-            }
-
-            Class<?>[] fieldsTypes = constructor.getParameterTypes();
-
-            // Set all fields to null to instantiate the entity
-            Object [] fieldsNull = new Object[fieldsTypes.length];
-            for (int i = 0; i < fieldsTypes.length; i++) {
-                fieldsNull[i] = null;
-            }
-
-            entity = clazz.getDeclaredConstructor(fieldsTypes).newInstance(fieldsNull);
-
-            Field[] fields = clazz.getDeclaredFields();
-            for (Field field : fields) {
-                if (field.isAnnotationPresent(Column.class)) {
-                    Column columnAnnotation = field.getAnnotation(Column.class);
-                    String columnName = columnAnnotation.name();
-                    field.setAccessible(true);
-                    field.set(entity, resultSet.getObject(columnName));
-                } else if (field.isAnnotationPresent(PrimaryKey.class)){
-                    PrimaryKey primaryKeyAnnotation = field.getAnnotation(PrimaryKey.class);
-                    String idColumnName = primaryKeyAnnotation.name();
-                    field.setAccessible(true);
-                    field.set(entity, resultSet.getObject(idColumnName));
-                }
-            }
-        } catch (ReflectiveOperationException e) {
-            logger.severe("Error mapping ResultSet to entity " + clazz.getSimpleName() + " : " + e.getMessage());
-        }
-
-        return entity;
-    }
-
     public void save(T entity) {
         RepositoryUtils.checkAnnotations(clazz);
 
         PrimaryKeyValues primaryKeyValues =  RepositoryUtils.getPrimaryKeyValues(entity, clazz);
 
         if (existsById(primaryKeyValues)) {
-            logger.warning("A " + clazz.getSimpleName() + " record with the same primary key (" + primaryKeyValues.getValues().toString() + ") already exists.");
+            logger.warn("A " + clazz.getSimpleName() + " record with the same primary key (" + primaryKeyValues.getValues().toString() + ") already exists.");
             return;
         }
 
@@ -174,11 +106,11 @@ public class SQLGenericRepository<T> implements IRepository<T> {
                 dbManager.commitTransaction();
                 logger.info(clazz.getSimpleName() + " saved successfully.");
             } else {
-                logger.warning("Saving " + clazz.getSimpleName() + " failed.");
+                logger.warn("Saving " + clazz.getSimpleName() + " failed.");
                 rollbackAndHandleErrors();
             }
         } catch (IllegalAccessException e) {
-            logger.severe("Error saving entity: " + e.getMessage());
+            logger.error("Error saving entity: " + e.getMessage());
             rollbackAndHandleErrors();
         } finally {
             disconnectAndHandleErrors();
@@ -191,7 +123,7 @@ public class SQLGenericRepository<T> implements IRepository<T> {
         RepositoryUtils.checkPrimaryKeyValuesMap(idValues, clazz);
 
         if (!existsById(idValues)) {
-            logger.warning("The " + clazz.getSimpleName() + " record does not exist, it cannot be deleted.");
+            logger.warn("The " + clazz.getSimpleName() + " record does not exist, it cannot be deleted.");
             return;
         }
 
@@ -218,7 +150,7 @@ public class SQLGenericRepository<T> implements IRepository<T> {
                 dbManager.commitTransaction();
                 logger.info(clazz.getSimpleName() + " deleted successfully.");
             } else {
-                logger.warning("Deleting " + clazz.getSimpleName() + " failed. The record has not been deleted or does not exist.");
+                logger.warn("Deleting " + clazz.getSimpleName() + " failed. The record has not been deleted or does not exist.");
                 rollbackAndHandleErrors();
             }
         } finally {
@@ -233,7 +165,7 @@ public class SQLGenericRepository<T> implements IRepository<T> {
         RepositoryUtils.checkPrimaryKeyValuesMap(primaryKeyValuesMap, clazz);
 
         if (!existsById(primaryKeyValuesMap)) {
-            logger.warning("The " + clazz.getSimpleName() + " record does not exist, and cannot be updated.");
+            logger.warn("The " + clazz.getSimpleName() + " record does not exist, and cannot be updated.");
             return;
         }
 
@@ -277,11 +209,11 @@ public class SQLGenericRepository<T> implements IRepository<T> {
                 dbManager.commitTransaction();
                 logger.info(clazz.getSimpleName() + " updated successfully.");
             } else {
-                logger.warning("Updating " + clazz.getSimpleName() + " failed. The record was not updated or does not exist.");
+                logger.warn("Updating " + clazz.getSimpleName() + " failed. The record was not updated or does not exist.");
                 rollbackAndHandleErrors();
             }
         } catch (IllegalAccessException e) {
-            logger.severe("Error updating entity: " + e.getMessage());
+            logger.error("Error updating entity: " + e.getMessage());
             rollbackAndHandleErrors();
         } finally {
             disconnectAndHandleErrors();
@@ -321,7 +253,7 @@ public class SQLGenericRepository<T> implements IRepository<T> {
             }
 
         } catch (SQLException e) {
-            logger.severe("Error checking if entity exists: " + e.getMessage());
+            logger.error("Error checking if entity exists: " + e.getMessage());
             rollbackAndHandleErrors();
         } finally {
             disconnectAndHandleErrors();
@@ -329,7 +261,7 @@ public class SQLGenericRepository<T> implements IRepository<T> {
                 try {
                     resultSet.close();
                 } catch (SQLException e) {
-                    logger.severe("Error closing ResultSet: " + e.getMessage());
+                    logger.error("Error closing ResultSet: " + e.getMessage());
                 }
             }
         }
@@ -372,12 +304,12 @@ public class SQLGenericRepository<T> implements IRepository<T> {
             resultSet = dbManager.executeQuery(sql, idValuesArray);
 
             if (resultSet.next()) {
-                entity = mapResultSetToEntity(resultSet);
+                entity = SQLRepositoryUtils.mapResultSetToEntity(resultSet, clazz);
             }
 
             dbManager.commitTransaction();
         } catch (SQLException e) {
-            logger.severe("Error finding entity by id: " + e.getMessage());
+            logger.error("Error finding entity by id: " + e.getMessage());
             rollbackAndHandleErrors();
         } finally {
             disconnectAndHandleErrors();
@@ -385,7 +317,7 @@ public class SQLGenericRepository<T> implements IRepository<T> {
                 try {
                     resultSet.close();
                 } catch (SQLException e) {
-                    logger.severe("Error closing ResultSet: " + e.getMessage());
+                    logger.error("Error closing ResultSet: " + e.getMessage());
                 }
             }
         }
@@ -409,13 +341,13 @@ public class SQLGenericRepository<T> implements IRepository<T> {
             resultSet = dbManager.executeQuery(sql);
 
             while (resultSet.next()) {
-                T entity = mapResultSetToEntity(resultSet);
+                T entity = SQLRepositoryUtils.mapResultSetToEntity(resultSet, clazz);
                 entities.add(entity);
             }
 
             dbManager.commitTransaction();
         } catch (SQLException e) {
-            logger.severe("Error finding all entities: " + e.getMessage());
+            logger.error("Error finding all entities: " + e.getMessage());
             rollbackAndHandleErrors();
         } finally {
             disconnectAndHandleErrors();

@@ -1,13 +1,14 @@
 package com.unirutas.core.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class ClasspathScanner {
-    private static final Logger logger = Logger.getLogger(ClasspathScanner.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(ClasspathScanner.class);
     private static final String classpath = System.getProperty("java.class.path");
     private static final String[] classpathEntries = classpath.split(System.getProperty("path.separator"));
 
@@ -30,7 +31,7 @@ public class ClasspathScanner {
                             return Class.forName(className);
                         } catch (ClassNotFoundException e) {
                             // Log the exception with context.
-                            logger.log(Level.WARNING, "Class not found: " + className, e);
+                            logger.warn("Class not found: " + className, e);
                         }
                     }
                 }
