@@ -6,6 +6,7 @@ import com.unirutas.core.dependency.annotations.Implementation;
 import com.unirutas.core.dependency.annotations.Inject;
 import com.unirutas.core.providers.RepositoryFactoryProvider;
 import com.unirutas.models.Administrative;
+import com.unirutas.models.User;
 import com.unirutas.repository.AdministrativeRepository;
 import com.unirutas.services.interfaces.UserServices;
 
@@ -17,12 +18,12 @@ public class AdministrativeServices implements UserServices<Administrative> {
     @Inject
     private AdministrativeRepository administrativeRepository;
 
-    public void create(String name, String code, String username, String password) {
-        administrativeRepository.save(new Administrative(name, code, username, password));
+    public void create(User user) {
+        administrativeRepository.save((Administrative) user);
     }
 
-    public void update(String name, String code, String username, String password) {
-        administrativeRepository.update(new Administrative(name, code, username, password));
+    public void update(User user) {
+        administrativeRepository.update((Administrative) user);
     }
 
     public void delete(String code) {
