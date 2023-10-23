@@ -13,6 +13,28 @@ public class ClasspathScanner {
     private static final String[] classpathEntries = classpath.split(System.getProperty("path.separator"));
 
     /**
+     * Find all classes in the classpath.
+     * @return A list of all classes in the classpath.
+     */
+    public static List<String> scanClasses() {
+        List<String> classes = new ArrayList<>();
+        for (String classpathEntry : classpathEntries) {
+            File file = new File(classpathEntry);
+
+            if (file.isDirectory()) {
+                List<String> classNames = findClassesInDirectory(file, "");
+
+                for (String className : classNames) {
+                    if (!classes.contains(className)) {
+                        classes.add(className);
+                    }
+                }
+            }
+        }
+        return classes;
+    }
+
+    /**
      * Find a class in the classpath and return it as a Class object if found.
      *
      * @param targetClassName The name of the class to find.

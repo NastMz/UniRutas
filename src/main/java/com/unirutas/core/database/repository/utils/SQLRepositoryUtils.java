@@ -3,14 +3,17 @@ package com.unirutas.core.database.repository.utils;
 import com.unirutas.core.annotations.Column;
 import com.unirutas.core.annotations.PrimaryKey;
 import com.unirutas.core.annotations.Table;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class SQLRepositoryUtils {
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(SQLRepositoryUtils.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(SQLRepositoryUtils.class.getName());
     /**
      * Map a ResultSet to an entity.
      *
@@ -18,33 +21,12 @@ public class SQLRepositoryUtils {
      * @return The entity.
      * @throws SQLException If an error occurs while mapping the ResultSet.
      */
-    public static <T> T mapResultSetToEntity(ResultSet resultSet, Class<T> clazz) throws SQLException {
+    public static <T> T mapResultSetToEntity(ResultSet resultSet, Class<T> clazz) {
         RepositoryUtils.checkAnnotations(clazz);
         T entity = null;
         try {
 
-            // Get fields types to instantiate the entity
-
-            Constructor<?>[] constructors = clazz.getDeclaredConstructors();
-
-            Constructor<?> constructor = null;
-
-            for (Constructor<?> c : constructors) {
-                if (c.getParameterCount() > 0) {
-                    constructor = c;
-                    break;
-                }
-            }
-
-            Class<?>[] fieldsTypes = constructor.getParameterTypes();
-
-            // Set all fields to null to instantiate the entity
-            Object [] fieldsNull = new Object[fieldsTypes.length];
-            for (int i = 0; i < fieldsTypes.length; i++) {
-                fieldsNull[i] = null;
-            }
-
-            entity = clazz.getDeclaredConstructor(fieldsTypes).newInstance(fieldsNull);
+            entity = RepositoryUtils.instanceEntity(clazz, entity);
 
             Field[] fields = clazz.getDeclaredFields();
             for (Field field : fields) {
@@ -67,24 +49,11 @@ public class SQLRepositoryUtils {
                     field.set(entity, resultSet.getObject(idColumnName));
                 }
             }
-        } catch (ReflectiveOperationException e) {
-            logger.severe("Error mapping ResultSet to entity " + clazz.getSimpleName() + " : " + e.getMessage());
+        } catch (Exception e) {
+            logger.error("Error mapping ResultSet to entity " + clazz.getSimpleName() + " : \n\t\t" + e.getMessage());
         }
 
         return entity;
-    }
-
-    private static boolean isColumnInResultSet(ResultSet resultSet, String columnName) throws SQLException {
-        // Check if the column is in the result set to avoid an exception
-        boolean columnInResultSet = false;
-
-        for (int i = 1; i <= resultSet.getMetaData().getColumnCount(); i++) {
-            if (resultSet.getMetaData().getColumnName(i).equals(columnName)) {
-                columnInResultSet = true;
-                break;
-            }
-        }
-        return columnInResultSet;
     }
 
     /**
@@ -100,5 +69,25 @@ public class SQLRepositoryUtils {
             return tableAnnotation.name();
         }
         return null;
+    }
+
+    /**
+     * Check if the column is in the result set to avoid an exception.
+     * @param resultSet The result set.
+     * @param columnName The column name.
+     * @return True if the column is in the result set. False otherwise.
+     * @throws SQLException If an error occurs while checking if the column is in the result set.
+     */
+    public static boolean isColumnInResultSet(ResultSet resultSet, String columnName) throws SQLException {
+        // Check if the column is in the result set to avoid an exception
+        boolean columnInResultSet = false;
+
+        for (int i = 1; i <= resultSet.getMetaData().getColumnCount(); i++) {
+            if (resultSet.getMetaData().getColumnName(i).equals(columnName)) {
+                columnInResultSet = true;
+                break;
+            }
+        }
+        return columnInResultSet;
     }
 }

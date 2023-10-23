@@ -1,6 +1,5 @@
 package com.unirutas.core.factory.builder.implementation;
 
-import com.unirutas.core.builder.query.implementation.sql.SQLCustomQueryBuilder;
 import com.unirutas.core.builder.query.interfaces.ICustomQueryBuilder;
 import com.unirutas.core.database.enums.NoSQLDatabaseEngine;
 import com.unirutas.core.database.enums.SQLDatabaseEngine;

@@ -24,28 +24,7 @@ public class MongoDBRepositoryUtils {
         T entity = null;
         try {
 
-            // Get fields types to instantiate the entity
-
-            Constructor<?>[] constructors = clazz.getDeclaredConstructors();
-
-            Constructor<?> constructor = null;
-
-            for (Constructor<?> c : constructors) {
-                if (c.getParameterCount() > 0) {
-                    constructor = c;
-                    break;
-                }
-            }
-
-            Class<?>[] fieldsTypes = constructor.getParameterTypes();
-
-            // Set all fields to null to instantiate the entity
-            Object [] fieldsNull = new Object[fieldsTypes.length];
-            for (int i = 0; i < fieldsTypes.length; i++) {
-                fieldsNull[i] = null;
-            }
-
-            entity = clazz.getDeclaredConstructor(fieldsTypes).newInstance(fieldsNull);
+            entity = RepositoryUtils.instanceEntity(clazz, entity);
 
             Field[] fields = clazz.getDeclaredFields();
 

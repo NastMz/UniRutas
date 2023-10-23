@@ -22,6 +22,10 @@ public class Service {
         return id;
     }
 
+    public String getRouteId() {
+        return routeId;
+    }
+
     public List<Bus> getBuses() {
         return ServiceBus.getBusForService(this.id);
     }
