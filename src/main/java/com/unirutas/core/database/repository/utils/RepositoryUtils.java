@@ -56,7 +56,7 @@ public class RepositoryUtils {
      * @throws IllegalArgumentException If the entity does not have any field annotated with @Column.
      * @see Column
      */
-    private static <T> void checkColumnAnnotations(Class<T> clazz) {
+    private static <T> boolean checkColumnAnnotations(Class<T> clazz) {
         Field[] fields = clazz.getDeclaredFields();
         boolean hasColumnAnnotation = false;
 
@@ -67,9 +67,7 @@ public class RepositoryUtils {
             }
         }
 
-        if (!hasColumnAnnotation) {
-            throw new IllegalArgumentException("The entity " + clazz.getSimpleName() + " does not have any columns associated.");
-        }
+        return hasColumnAnnotation;
     }
 
     /**
@@ -77,7 +75,7 @@ public class RepositoryUtils {
      *
      * @throws IllegalArgumentException If the entity has a field annotated with @Column that is also part of the primary key.
      */
-    private static <T> void checkPrimaryKeyAnnotations(Class<T> clazz) {
+    private static <T> boolean checkPrimaryKeyAnnotations(Class<T> clazz) {
         Field[] fields = clazz.getDeclaredFields();
         boolean hasColumnAnnotation = false;
 
@@ -88,9 +86,7 @@ public class RepositoryUtils {
             }
         }
 
-        if (!hasColumnAnnotation) {
-            throw new IllegalArgumentException("The entity " + clazz.getSimpleName() + " does not have any primary key columns associated.");
-        }
+        return hasColumnAnnotation;
     }
 
     /**
@@ -103,9 +99,13 @@ public class RepositoryUtils {
             throw new IllegalArgumentException("The entity does not have a table name defined.");
         }
 
-        checkColumnAnnotations(clazz);
+        if (!checkPrimaryKeyAnnotations(clazz)) {
+            throw new IllegalArgumentException("The entity " + clazz.getSimpleName() + " does not have a primary key defined.");
+        }
 
-        checkPrimaryKeyAnnotations(clazz);
+        if (!checkColumnAnnotations(clazz)) {
+            logger.warn("The entity " + clazz.getSimpleName() + " does not have any field annotated with @Column.");
+        }
     }
 
     /**
