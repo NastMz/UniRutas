@@ -15,15 +15,15 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SQLCustomQueryBuilder<T> implements ICustomQueryBuilder<T> {
+public class SQLCustomQueryBuilder implements ICustomQueryBuilder {
     private final SQLDatabaseManager dbManager;
     private final SQLQueryBuilder sqlQueryBuilder;
-    private final Class<T> clazz;
+    private final Class<?> clazz;
     private static final Logger logger = LoggerFactory.getLogger(SQLCustomQueryBuilder.class);
     private boolean hasJoined;  // Flag to track if a join has been called
     private final List<Class<?>> entities = new ArrayList<>();  // List of entities that have been joined
 
-    public SQLCustomQueryBuilder(Class<T> clazz) {
+    public SQLCustomQueryBuilder(Class<?> clazz) {
         this.dbManager = (SQLDatabaseManager) DatabaseManagerFactoryProvider.getFactory().createDatabaseManager();
         this.sqlQueryBuilder = new SQLQueryBuilder(SQLRepositoryUtils.getTableName(clazz));
         this.clazz = clazz;
@@ -31,11 +31,11 @@ public class SQLCustomQueryBuilder<T> implements ICustomQueryBuilder<T> {
         entities.add(clazz);
     }
 
-    public ICustomQueryBuilder<T> select() {
+    public ICustomQueryBuilder select() {
         return this;
     }
 
-    public ICustomQueryBuilder<T> fields(String... fields) {
+    public ICustomQueryBuilder fields(String... fields) {
         for (String field : fields) {
             QueryBuilderUtils.checkField(field, clazz);
             sqlQueryBuilder.addField(field);
@@ -43,25 +43,25 @@ public class SQLCustomQueryBuilder<T> implements ICustomQueryBuilder<T> {
         return this;
     }
 
-    public ICustomQueryBuilder<T> where(String field, Object value) {
+    public ICustomQueryBuilder where(String field, Object value) {
         QueryBuilderUtils.checkField(field, clazz);
         sqlQueryBuilder.addFilter(field, value);
         return this;
     }
 
-    public ICustomQueryBuilder<T> and(String field, Object value) {
+    public ICustomQueryBuilder and(String field, Object value) {
         QueryBuilderUtils.checkField(field, clazz);
         sqlQueryBuilder.addAnd(field, value);
         return this;
     }
 
-    public ICustomQueryBuilder<T> or(String field, Object value) {
+    public ICustomQueryBuilder or(String field, Object value) {
         QueryBuilderUtils.checkField(field, clazz);
         sqlQueryBuilder.addOr(field, value);
         return this;
     }
 
-    public ICustomQueryBuilder<T> join(String sourceField, Class<?> targetEntity, String targetField) {
+    public ICustomQueryBuilder join(String sourceField, Class<?> targetEntity, String targetField) {
         QueryBuilderUtils.checkField(sourceField, clazz);
         QueryBuilderUtils.checkTable(targetEntity, targetField);
 
@@ -81,7 +81,7 @@ public class SQLCustomQueryBuilder<T> implements ICustomQueryBuilder<T> {
         return this;
     }
 
-    public ICustomQueryBuilder<T> join(Class<?> sourceEntity, String sourceField, Class<?> targetEntity, String targetField) {
+    public ICustomQueryBuilder join(Class<?> sourceEntity, String sourceField, Class<?> targetEntity, String targetField) {
         if (!hasJoined) {
             String message = "You can't chain a new join before calling the initial join.";
             logger.error(message);
@@ -106,7 +106,7 @@ public class SQLCustomQueryBuilder<T> implements ICustomQueryBuilder<T> {
         return this;
     }
 
-    public ICustomQueryBuilder<T> joinFields(String... fields) {
+    public ICustomQueryBuilder joinFields(String... fields) {
 
         if (!hasJoined) {
             throwIllegalStateException("You can't add join fields before calling the initial join.");

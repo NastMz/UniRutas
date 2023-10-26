@@ -16,7 +16,7 @@ import java.util.Properties;
 
 public class NoSQLCustomQueryBuilderFactory implements ICustomQueryBuilderFactory {
     private static final Logger logger = LoggerFactory.getLogger(NoSQLCustomQueryBuilderFactory.class);
-    public ICustomQueryBuilder<?> createCustomQueryBuilder(Class<?> clazz) {
+    public ICustomQueryBuilder createCustomQueryBuilder(Class<?> clazz) {
         try (InputStream is = getClass().getClassLoader().getResourceAsStream("database.properties")) {
             if (is == null) {
                 throw new IOException("Database properties file not found.");
@@ -33,14 +33,14 @@ public class NoSQLCustomQueryBuilderFactory implements ICustomQueryBuilderFactor
         }
     }
 
-    private ICustomQueryBuilder<?> createCustomQueryBuilder(String databaseEngine, Class<?> clazz) {
+    private ICustomQueryBuilder createCustomQueryBuilder(String databaseEngine, Class<?> clazz) {
         try {
             NoSQLDatabaseEngine noSQLDatabaseEngine = NoSQLDatabaseEngine.valueOf(databaseEngine.toUpperCase());
 
             Class<?> customQueryBuilderClass = ClasspathScanner.getClass(noSQLDatabaseEngine.getCustomQueryBuilder());
 
             if (customQueryBuilderClass != null) {
-                Constructor<ICustomQueryBuilder<?>> constructor = (Constructor<ICustomQueryBuilder<?>>) customQueryBuilderClass.getDeclaredConstructor(clazz.getClass());
+                Constructor<ICustomQueryBuilder> constructor = (Constructor<ICustomQueryBuilder>) customQueryBuilderClass.getDeclaredConstructor(clazz.getClass());
                 return constructor.newInstance(clazz);
             } else {
                 throw new ClassNotFoundException("Custom query builder class not found: " + noSQLDatabaseEngine.getCustomQueryBuilder());
