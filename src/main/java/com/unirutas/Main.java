@@ -1,15 +1,14 @@
 package com.unirutas;
 
-import com.unirutas.controllers.BusController;
-import com.unirutas.controllers.JourneyController;
-import com.unirutas.controllers.ServiceController;
-import com.unirutas.controllers.UserController;
+import com.unirutas.controllers.*;
+import com.unirutas.core.builder.query.interfaces.ICustomQueryBuilder;
+import com.unirutas.core.builder.query.types.Tuple;
 import com.unirutas.core.database.connection.interfaces.IConnectionPool;
 import com.unirutas.core.database.manager.interfaces.IDatabaseManager;
-import com.unirutas.core.database.repository.CrudRepository;
 import com.unirutas.core.dependency.injector.implementation.DependencyInjector;
 import com.unirutas.core.dependency.injector.interfaces.IDependencyInjector;
 import com.unirutas.core.providers.ConnectionPoolFactoryProvider;
+import com.unirutas.core.providers.CustomQueryBuilderProvider;
 import com.unirutas.core.providers.DatabaseManagerFactoryProvider;
 import com.unirutas.models.*;
 import com.unirutas.services.implementation.AdministrativeServices;
@@ -19,6 +18,7 @@ import com.unirutas.services.interfaces.UserServices;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 public class Main {
@@ -44,7 +44,15 @@ public class Main {
         UserController adminController = new UserController(administrativeServices);
 
         BusController busController = new BusController();
+
         JourneyController journeyController = new JourneyController();
+        dependencyInjector.injectDependencies(journeyController);
+
+        AlertController alertController = new AlertController();
+        dependencyInjector.injectDependencies(alertController);
+
+        StudentAlertController studentAlertController = new StudentAlertController();
+        dependencyInjector.injectDependencies(studentAlertController);
 
         // Crear journey y stops
         Coordinate coordinate1 = new Coordinate(1.0, 2.0);
@@ -55,11 +63,29 @@ public class Main {
 
         List<Stop> stops = new ArrayList<>(Arrays.asList(stop1, stop2));
         Direction direction = new Direction("Sentido1");
+
+        DirectionController directionController = new DirectionController();
+        dependencyInjector.injectDependencies(directionController);
+
+        directionController.createDirection(direction);
+
         Journey journey = new Journey(direction.getId());
+        journeyController.createJourney(journey);
 
         // Crear servicio y suscribir estudiante
         Route route = new Route("Ruta1", journey.getId());
-        ServiceController serviceController = new ServiceController(route, direction);
+        ServiceController serviceController = new ServiceController(route);
+
+        dependencyInjector.injectDependencies(serviceController);
+
+        RouteController routeController = new RouteController();
+        dependencyInjector.injectDependencies(routeController);
+
+        routeController.createRoute(route);
+
+        // Crear Servicio
+        Service service = new Service(route.getId());
+        serviceController.addService(service);
 
         // Agregar horarios y buses al servicio
         Schedule schedule1 = new Schedule(LocalTime.of(8, 0));
@@ -86,7 +112,7 @@ public class Main {
         studentController.createUser(student);
 
         // Crear un administrativo
-        Administrative administrative = new Administrative("Kevin Martinez", "160004314", "ksmartinez", "321");
+        Administrative administrative = new Administrative("Kevin Martinez", "160004321", "ksmartinez", "321");
         adminController.createUser(administrative);
 
         // Actualizar un estudiante (por ejemplo, cambiar su contraseña)
@@ -113,9 +139,55 @@ public class Main {
 
         System.out.println("Usuarios:");
         for (User user : users) {
-            System.out.println(user.getName() + " " + user.getCode() + " " + user.getUsername() );
+            System.out.println(user.getName() + " " + user.getCode() + " " + user.getUsername());
         }
 
-        connectionPool.closeAllConnections();
+        student = new Student("Mateo Granada", "160004314", "mgranada", "123");
+        studentController.createUser(student);
+
+        // Crear alerta
+
+        Alert alert = new Alert(new java.sql.Date(new Date().getTime()), "Alerta de prueba", "image", service.getId());
+
+        alertController.createAlert(alert);
+
+        // Crear alerta para estudiante
+        StudentAlert studentAlert = new StudentAlert(true, student.getCode(), alert.getId());
+
+        studentAlertController.create(studentAlert);
+
+        // Custom query builder example (select all alerts from a student) using the query builder to perform an inner join.
+        // Also, the query builder is used to perform a join with the Alert and Service tables to get the description, date and route id.
+        ICustomQueryBuilder<Student> queryBuilder = (ICustomQueryBuilder<Student>) CustomQueryBuilderProvider.getFactory().createCustomQueryBuilder(Student.class);
+        List<List<Tuple<String, Object>>> results = queryBuilder.select()
+                .fields("name", "code", "username")
+                .join("code", StudentAlert.class, "student_code")
+                .join(StudentAlert.class, "alert_id", Alert.class, "id")
+                .join(Alert.class, "service_id", Service.class, "id")
+                .joinFields("date", "description", "is_read", "alert_id", "service_id", "route_id")
+                .where("code", "160004314")
+                .and("username", "mgranada")
+                .execute();
+
+        System.out.println("Alertas del estudiante con código 160004314 y nombre de usuario mgranada:");
+        int i = 1;
+        for (List<Tuple<String, Object>> result : results) {
+            System.out.println(i++);
+            for (Tuple<String, Object> tuple : result) {
+                if (tuple.getKey().equals("Alert")){
+                    Alert alert1 = (Alert) tuple.getValue();
+                    System.out.println("Descripcion: " + alert1.getDescription() + ", Fecha: " + alert1.getDate());
+                } else if (tuple.getKey().equals("StudentAlert")){
+                    StudentAlert studentAlert1 = (StudentAlert) tuple.getValue();
+                    System.out.println("Alerta: " + studentAlert1.getAlertId());
+                    System.out.println("Leida: " + studentAlert1.isRead());
+                } else if (tuple.getKey().equals("Service")){
+                    Service service1 = (Service) tuple.getValue();
+                    System.out.println("Servicio: " + service1.getId());
+                    System.out.println("Ruta: " + service1.getRouteId());
+                }
+            }
+            System.out.println();
+        }
     }
 }

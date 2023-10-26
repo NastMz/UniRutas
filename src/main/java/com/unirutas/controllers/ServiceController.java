@@ -1,21 +1,29 @@
 package com.unirutas.controllers;
 
+import com.unirutas.core.dependency.annotations.Inject;
 import com.unirutas.models.*;
+import com.unirutas.services.implementation.ServiceServices;
 
 import java.util.List;
 
 public class ServiceController {
+    // TODO: Quitar el atributo service y pasarlo por parámetro en los métodos
     private final Service service;
 
-    public ServiceController(Route route, Direction direction) {
-        service = new Service(route.getId(), direction.getId());
+    @Inject
+    private ServiceServices serviceServices;
+
+    public ServiceController(Route route) {
+        service = new Service(route.getId());
     }
 
     public void assignSchedule(Schedule schedule) {
+        // TODO: Implementar el método con la lógica de negocio correspondiente
         this.service.addSchedule(schedule);
     }
 
     public void assignBus(Bus bus) {
+        // TODO: Implementar el método con la lógica de negocio correspondiente
         service.addBus(bus);
     }
 
@@ -36,10 +44,26 @@ public class ServiceController {
     }
 
     public void addService(Service service) {
-        // TODO: Implementar la lógica para añadirlo en la DB
+        serviceServices.create(service);
+    }
+
+    public void updateService(Service service) {
+        serviceServices.update(service);
     }
 
     public void removeService(Service service) {
-        // TODO: Implementar la lógica para añadirlo en la DB
+        serviceServices.delete(service.getId());
+    }
+
+    public Service findServiceById(String id) {
+        return serviceServices.findById(id);
+    }
+
+    public boolean existsServiceById(String id) {
+        return serviceServices.existsById(id);
+    }
+
+    public List<Service> findAllServices() {
+        return serviceServices.findAll();
     }
 }

@@ -5,6 +5,8 @@ import com.unirutas.core.factory.connection.implementation.SQLConnectionPoolFact
 import com.unirutas.core.factory.connection.interfaces.IConnectionPoolFactory;
 import com.unirutas.core.database.enums.SQLDatabaseEngine;
 import com.unirutas.core.database.enums.NoSQLDatabaseEngine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,10 +16,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.logging.Logger;
 
 public class ConnectionPoolFactoryProvider {
-    private static final Logger logger = Logger.getLogger(ConnectionPoolFactoryProvider.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(ConnectionPoolFactoryProvider.class);
 
     private static final Map<String, IConnectionPoolFactory> factoryMap = createFactoryMap();
 
@@ -37,7 +38,7 @@ public class ConnectionPoolFactoryProvider {
             // Log and throw an exception with a descriptive message.
             String errorMessage = "Unsupported database engine: " + databaseEngine +
                     ". Supported database engines are: " + supportedDatabaseEngines;
-            logger.severe(errorMessage);
+            logger.error(errorMessage);
             throw new IllegalArgumentException(errorMessage);
         }
     }
@@ -50,7 +51,7 @@ public class ConnectionPoolFactoryProvider {
         } catch (IOException e) {
             // Log and rethrow the exception with a more informative message.
             String errorMessage = "Error reading database engine from database.properties: " + e.getMessage();
-            logger.severe(errorMessage);
+            logger.error(errorMessage);
             throw new RuntimeException(errorMessage, e);
         }
     }
@@ -83,12 +84,12 @@ public class ConnectionPoolFactoryProvider {
                 String propertyValue = props.getProperty(propertyName);
                 if (propertyValue == null || propertyValue.trim().isEmpty()) {
                     String errorMessage = "Missing config property: " + propertyName + " in database.properties";
-                    logger.severe(errorMessage);
+                    logger.error(errorMessage);
                     throw new IllegalArgumentException(errorMessage);
                 }
             }
         } catch (IOException e) {
-            logger.severe("Error reading database.properties file: " + e.getMessage());
+            logger.error("Error reading database.properties file: " + e.getMessage());
             throw new RuntimeException("Error reading database.properties file: " + e.getMessage(), e);
         }
     }

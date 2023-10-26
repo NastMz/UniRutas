@@ -1,37 +1,36 @@
 package com.unirutas.controllers;
 
-import com.unirutas.models.Coordinate;
+import com.unirutas.core.dependency.annotations.Inject;
 import com.unirutas.models.Journey;
-import com.unirutas.models.Section;
-import com.unirutas.models.Stop;
+import com.unirutas.services.implementation.JourneyServices;
 
 import java.util.List;
 
-
-// TODO: Implementar la lógica para añadirlo en la DB
 public class JourneyController {
-    private Journey journey;
-
-    public void addStop(Stop stop) {
-        journey.addStop(stop);
+    @Inject
+    private JourneyServices journeyServices;
+    public void createJourney(Journey journey) {
+        journeyServices.create(journey);
     }
 
-    public void removeStop(Stop stop) {
-        journey.removeStop(stop);
+    public void updateJourney(Journey journey) {
+        journeyServices.update(journey);
     }
 
-    public void createSection() {
-        Section section = new Section();
-        journey.addSection(section);
+    public void deleteJourney(String id) {
+        journeyServices.delete(id);
     }
 
-    public void removeSection(Section section) {
-        journey.removeSection(section);
+    public Journey findJourneyById(String id) {
+        return journeyServices.findById(id);
     }
 
-    public void removeSections(List<Section> sections) {
-        for (Section section : sections) {
-            journey.removeSection(section);
-        }
+    public boolean existsJourneyById(String id) {
+        return journeyServices.existsById(id);
     }
+
+    public List<Journey> findAllJourneys() {
+        return journeyServices.findAll();
+    }
+
 }

@@ -16,11 +16,11 @@ public class UserController {
 
 
     public void createUser(User user) {
-        userServices.create(user.getName(), user.getCode(), user.getUsername(), user.getPassword());
+        userServices.create(user);
     }
 
     public void updateUser(User user) {
-        userServices.update(user.getName(), user.getCode(), user.getUsername(), user.getPassword());
+        userServices.update(user);
     }
 
     public List<User> findAllUsers() {

@@ -5,16 +5,17 @@ import com.unirutas.core.database.enums.SQLDatabaseEngine;
 import com.unirutas.core.factory.repository.implementation.NoSQLRepositoryFactory;
 import com.unirutas.core.factory.repository.implementation.SQLRepositoryFactory;
 import com.unirutas.core.factory.repository.interfaces.IRepositoryFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Logger;
 
 public class RepositoryFactoryProvider {
-    private static final Logger logger = Logger.getLogger(RepositoryFactoryProvider.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(RepositoryFactoryProvider.class);
 
     private static final Map<String, IRepositoryFactory> factoryMap = createFactoryMap();
 
@@ -30,7 +31,7 @@ public class RepositoryFactoryProvider {
             // Log and throw an exception with a descriptive message.
             String errorMessage = "Unsupported database engine: " + databaseEngine +
                     ". Supported database engines are: " + supportedDatabaseEngines;
-            logger.severe(errorMessage);
+            logger.error(errorMessage);
             throw new IllegalArgumentException(errorMessage);
         }
     }
@@ -47,7 +48,7 @@ public class RepositoryFactoryProvider {
         } catch (IOException e) {
             // Log and rethrow the exception with a more informative message.
             String errorMessage = "Error reading database engine from database.properties: " + e.getMessage();
-            logger.severe(errorMessage);
+            logger.error(errorMessage);
             throw new RuntimeException(errorMessage, e);
         }
     }

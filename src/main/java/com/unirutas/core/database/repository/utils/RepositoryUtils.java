@@ -3,17 +3,22 @@ package com.unirutas.core.database.repository.utils;
 import com.unirutas.core.annotations.Column;
 import com.unirutas.core.annotations.PrimaryKey;
 import com.unirutas.core.annotations.Table;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
 
 public class RepositoryUtils {
 
-    private static final Logger logger = Logger.getLogger(RepositoryUtils.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(RepositoryUtils.class);
 
     /**
      * Get the values of the primary key of an entity.
@@ -29,12 +34,13 @@ public class RepositoryUtils {
         try {
             for (Field field : fields) {
                 if (field.isAnnotationPresent(PrimaryKey.class)) {
+                    PrimaryKey primaryKeyAnnotation = field.getAnnotation(PrimaryKey.class);
                     field.setAccessible(true);
-                    primaryKeyValues.put(field.getName(), field.get(entity));
+                    primaryKeyValues.put(primaryKeyAnnotation.name(), field.get(entity));
                 }
             }
         } catch (IllegalAccessException e) {
-            logger.severe("Error getting primary key values: " + e.getMessage());
+            logger.error("Error getting primary key values: " + e.getMessage());
         }
 
         if (primaryKeyValues.isEmpty()) {
@@ -102,6 +108,12 @@ public class RepositoryUtils {
         checkPrimaryKeyAnnotations(clazz);
     }
 
+    /**
+     * Check if the primary key values map contains all the primary key columns in the entity.
+     * @param idValues The primary key values map.
+     * @param clazz The entity class.
+     * @param <T> The entity type.
+     */
     public static <T> void checkPrimaryKeyValuesMap(PrimaryKeyValues idValues, Class<T> clazz) {
         Field[] fields = clazz.getDeclaredFields();
         Set<String> idColumnNames = new HashSet<>();
@@ -120,8 +132,81 @@ public class RepositoryUtils {
 
         for (String idColumnName : idValues.getValues().keySet()) {
             if (!idColumnNames.contains(idColumnName)) {
-                throw new IllegalArgumentException("The primary key values map contains a column that is not part of the primary key in the entity " + clazz.getSimpleName() + ".");
+                throw new IllegalArgumentException("The primary key values map contains a column (" + idColumnName + ") that is not part of the primary key in the entity " + clazz.getSimpleName() + ".");
             }
         }
+    }
+
+    /**
+     * Instantiate an entity.
+     * @param clazz The entity class.
+     * @param entity The entity to instantiate.
+     * @return The instantiated entity.
+     * @param <T> The entity type.
+     * @throws InstantiationException If an error occurs while instantiating the entity.
+     * @throws IllegalAccessException If an error occurs while instantiating the entity.
+     * @throws InvocationTargetException If an error occurs while instantiating the entity.
+     * @throws NoSuchMethodException If an error occurs while instantiating the entity.
+     */
+    public static <T> T instanceEntity(Class<T> clazz, T entity) throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        // Get fields types to instantiate the entity
+
+        Constructor<?>[] constructors = clazz.getDeclaredConstructors();
+
+        Constructor<?> constructor = null;
+
+        for (Constructor<?> c : constructors) {
+            if (c.getParameterCount() > 0) {
+                constructor = c;
+                break;
+            }
+        }
+
+        Class<?>[] fieldsTypes = constructor.getParameterTypes();
+
+        Object[] fieldsNull = getFieldsNull(fieldsTypes);
+
+        entity = clazz.getDeclaredConstructor(fieldsTypes).newInstance(fieldsNull);
+
+        return entity;
+    }
+
+    /**
+     * Get an array of null values for the fields of an entity.
+     * @param fieldsTypes The fields types.
+     * @return An array of null values for the fields of an entity.
+     * @throws InstantiationException If an error occurs while instantiating the entity.
+     * @throws IllegalAccessException If an error occurs while instantiating the entity.
+     * @throws InvocationTargetException If an error occurs while instantiating the entity.
+     * @throws NoSuchMethodException If an error occurs while instantiating the entity.
+     */
+    private static Object[] getFieldsNull(Class<?>[] fieldsTypes) throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        // Set all fields to null to instantiate the entity
+        Object [] fieldsNull = new Object[fieldsTypes.length];
+        for (int i = 0; i < fieldsTypes.length; i++) {
+            if (fieldsTypes[i].isPrimitive()){
+                // If the field is a primitive type, instantiate it with the default value of the type (0 for int, false for boolean, etc.)
+                if (fieldsTypes[i].equals(int.class)) {
+                    fieldsNull[i] = 0;
+                } else if (fieldsTypes[i].equals(boolean.class)) {
+                    fieldsNull[i] = false;
+                } else if (fieldsTypes[i].equals(long.class)) {
+                    fieldsNull[i] = 0L;
+                } else if (fieldsTypes[i].equals(float.class)) {
+                    fieldsNull[i] = 0.0f;
+                } else if (fieldsTypes[i].equals(double.class)) {
+                    fieldsNull[i] = 0.0d;
+                } else if (fieldsTypes[i].equals(byte.class)) {
+                    fieldsNull[i] = 0;
+                } else if (fieldsTypes[i].equals(short.class)) {
+                    fieldsNull[i] = 0;
+                } else if (fieldsTypes[i].equals(char.class)) {
+                    fieldsNull[i] = '\u0000';
+                }
+            } else {
+                fieldsNull[i] = fieldsTypes[i].getConstructor().newInstance();
+            }
+        }
+        return fieldsNull;
     }
 }

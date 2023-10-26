@@ -4,7 +4,7 @@ import com.unirutas.core.annotations.Column;
 import com.unirutas.core.annotations.PrimaryKey;
 import com.unirutas.core.annotations.Table;
 
-@Table(name="Service")
+@Table(name = "StudentAlert")
 public class StudentAlert {
     @Column(name = "is_read")
     private boolean isRead;
@@ -20,10 +20,23 @@ public class StudentAlert {
     }
 
     public void markRead() {
-        // TODO: Lógica para marcar la alerta como leída en la base de datos
+        isRead = true;
     }
 
     public void markNotRead() {
-        // TODO: Lógica para marcar la alerta como no leída en la base de datos
+        isRead = false;
     }
+
+    public boolean isRead() {
+        return isRead;
+    }
+
+    public String getStudentCode() {
+        return studentCode;
+    }
+
+    public String getAlertId() {
+        return alertId;
+    }
+
 }

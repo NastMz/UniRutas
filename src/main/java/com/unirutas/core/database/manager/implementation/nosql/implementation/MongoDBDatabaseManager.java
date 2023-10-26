@@ -6,39 +6,25 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.unirutas.core.database.connection.interfaces.IConnectionPool;
 import com.unirutas.core.database.manager.implementation.nosql.interfaces.IMongoDBDatabaseManager;
+import com.unirutas.core.database.repository.utils.MongoDBRepositoryUtils;
 import com.unirutas.core.providers.ConnectionPoolFactoryProvider;
 import org.bson.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class MongoDBDatabaseManager implements IMongoDBDatabaseManager {
 
     private static MongoDBDatabaseManager instance;
-    private MongoClient client;
-    private MongoDatabase database;
-    private static Logger logger = Logger.getLogger(MongoDBDatabaseManager.class.getName());
+    private final MongoDatabase database;
+    private static final Logger logger = LoggerFactory.getLogger(MongoDBDatabaseManager.class.getName());
 
     private MongoDBDatabaseManager() {
         IConnectionPool<MongoClient> connectionPool = (IConnectionPool<MongoClient>) ConnectionPoolFactoryProvider.getFactory().createConnectionPool();
-        client = connectionPool.getConnection();
-        loadDatabase();
-    }
-
-    private void loadDatabase() {
-        try (InputStream is = ConnectionPoolFactoryProvider.class.getClassLoader().getResourceAsStream("database.properties")) {
-            Properties props = new Properties();
-            props.load(is);
-            String dbName = props.getProperty("db.database");
-            database = client.getDatabase(dbName);
-        } catch (IOException e) {
-            handleException("Error reading database engine from database.properties", e);
-        }
+        MongoClient client = connectionPool.getConnection();
+        database = MongoDBRepositoryUtils.loadDatabase(client);
     }
 
     public static synchronized MongoDBDatabaseManager getInstance() {
@@ -125,12 +111,21 @@ public class MongoDBDatabaseManager implements IMongoDBDatabaseManager {
 
         String message;
         if (resultDoc != null) {
-            message = "Database Engine Date: " + resultDoc.get("lastModified");
-            logger.log(Level.INFO, message);
+            String date = resultDoc.get("lastModified").toString();
+
+            // Remove the time from the date string using a regex to match the date, we now that mongo date format is Sat Oct 21,
+            // so we find the first space and remove everything after it (including the space) also te year is at the end of the string
+
+            String year = date.replaceAll(".*\\s(\\d+)$", "$1");
+            date = date.replaceAll("^(\\w+\\s\\w+\\s\\w+).*", "$1");
+            date = date + ", " + year;
+
+            message = "Database Engine Date: " + date;
         } else {
             message = "Error obtaining date from database engine";
-            logger.log(Level.SEVERE, message);
         }
+
+        logger.info(message);
 
         // Delete the dummy document
         tempCollection.deleteOne(tempDoc);
@@ -145,13 +140,28 @@ public class MongoDBDatabaseManager implements IMongoDBDatabaseManager {
         Document command = new Document("serverStatus", 1);
         Document serverStatus = database.runCommand(command);
 
-        String message = "Database Engine Hour: " + serverStatus.get("localTime");
+        String hour = serverStatus.get("localTime").toString();
 
-        logger.log(Level.INFO, message);
+        // Remove the date from the time string using a regex to match the date, we now that mongo date format is Sat Oct 21,
+        // so we find the first space and remove everything after it (including the space) also te year is at the end of the string
+
+        String date = hour.replaceAll("^(\\w+\\s\\w+\\s\\w+).*", "$1");
+
+        int length = date.length();
+
+        hour = hour.substring(length + 1);
+
+        String year = hour.replaceAll(".*\\s(\\d+)$", "$1");
+
+        hour = hour.substring(0, hour.length() - year.length() - 1);
+
+        String message = "Database Engine Hour: " + hour;
+
+        logger.info(message);
 
     }
 
     private void handleException(String message, Exception e) {
-        logger.log(Level.SEVERE, message, e);
+        logger.error(message, e);
     }
 }

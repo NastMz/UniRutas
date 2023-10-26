@@ -12,17 +12,18 @@ public class Service {
     private String id;
     @Column(name = "route_id")
     private final String routeId;
-    @Column(name = "direction_id")
-    private final String directionId;
 
-    public Service(String routeId, String directionId) {
+    public Service(String routeId) {
         this.id = String.valueOf(UUID.randomUUID());
         this.routeId = routeId;
-        this.directionId = directionId;
     }
 
     public String getId() {
         return id;
+    }
+
+    public String getRouteId() {
+        return routeId;
     }
 
     public List<Bus> getBuses() {

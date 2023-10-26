@@ -6,12 +6,11 @@ import com.mongodb.client.MongoClients;
 import com.unirutas.core.database.config.implementation.nosql.interfaces.IMongoDBDatabaseConfig;
 import com.unirutas.core.database.connection.implementation.nosql.interfaces.IMongoDBConnectionPool;
 import com.unirutas.core.providers.DatabaseConfigFactoryProvider;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MongoDBConnectionPool implements IMongoDBConnectionPool {
-    private static final Logger logger = Logger.getLogger(MongoDBConnectionPool.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(MongoDBConnectionPool.class);
     private static MongoDBConnectionPool instance;
     private MongoClient mongoClient;
 
@@ -54,8 +53,7 @@ public class MongoDBConnectionPool implements IMongoDBConnectionPool {
     }
 
     private void handleException(String message, Exception e) {
-        logger.severe(message);
-        logger.log(Level.SEVERE, "Exception details: ", e);
+        logger.error(message);
         throw new RuntimeException(message, e);
     }
 }

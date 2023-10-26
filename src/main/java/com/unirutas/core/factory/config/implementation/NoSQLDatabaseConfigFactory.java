@@ -5,16 +5,17 @@ import com.unirutas.core.database.enums.NoSQLDatabaseEngine;
 import com.unirutas.core.database.enums.SQLDatabaseEngine;
 import com.unirutas.core.factory.config.interfaces.IDatabaseConfigFactory;
 import com.unirutas.core.utils.ClasspathScanner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Properties;
-import java.util.logging.Logger;
 
 public class NoSQLDatabaseConfigFactory implements IDatabaseConfigFactory {
-    private static final Logger logger = Logger.getLogger(NoSQLDatabaseConfigFactory.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(NoSQLDatabaseConfigFactory.class);
 
     @Override
     public IDatabaseConfig createDatabaseConfig() {
@@ -29,7 +30,7 @@ public class NoSQLDatabaseConfigFactory implements IDatabaseConfigFactory {
         } catch (IOException e) {
             // Log the exception and rethrow with a more informative message.
             String errorMessage = "Error loading database configuration: " + e.getMessage();
-            logger.severe(errorMessage);
+            logger.error(errorMessage);
             throw new RuntimeException(errorMessage, e);
         }
     }
@@ -49,7 +50,7 @@ public class NoSQLDatabaseConfigFactory implements IDatabaseConfigFactory {
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | ClassNotFoundException ex) {
             // Log the exception and rethrow with a more informative message.
             String errorMessage = "Error creating NoSQL database config: " + ex.getMessage();
-            logger.severe(errorMessage);
+            logger.error(errorMessage);
             throw new RuntimeException(errorMessage, ex);
         } catch (IllegalArgumentException e) {
             StringBuilder supportedDatabases = new StringBuilder();

@@ -5,17 +5,18 @@ import com.unirutas.core.annotations.PrimaryKey;
 import com.unirutas.core.annotations.Table;
 import com.unirutas.core.database.manager.implementation.nosql.implementation.MongoDBDatabaseManager;
 import com.unirutas.core.database.repository.interfaces.IRepository;
+import com.unirutas.core.database.repository.utils.MongoDBRepositoryUtils;
 import com.unirutas.core.database.repository.utils.PrimaryKeyValues;
 import com.unirutas.core.database.repository.utils.RepositoryUtils;
 import com.unirutas.core.providers.DatabaseManagerFactoryProvider;
 import org.bson.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 /**
  * Class to manage generic repository operations for MongoDB.
@@ -26,73 +27,15 @@ public class MongoDBGenericRepository<T> implements IRepository<T> {
     private final MongoDBDatabaseManager dbManager;
     private final Class<T> clazz;
     private final String collectionName;
-    private final Logger logger = Logger.getLogger(MongoDBGenericRepository.class.getName());
+    private final Logger logger = LoggerFactory.getLogger(MongoDBGenericRepository.class);
 
     public MongoDBGenericRepository(Class<T> clazz) {
         this.dbManager = (MongoDBDatabaseManager) DatabaseManagerFactoryProvider.getFactory().createDatabaseManager();
         this.clazz = clazz;
-        this.collectionName = getCollectionName(clazz);
+        this.collectionName = MongoDBRepositoryUtils.getCollectionName(clazz);
     }
 
-    private String getCollectionName(Class<?> clazz) {
-        if (clazz.isAnnotationPresent(Table.class)) {
-            Table tableAnnotation = clazz.getAnnotation(Table.class);
-            return tableAnnotation.name();
-        }
-        return null;
-    }
 
-    private T mapDocumentToEntity(Document document) {
-        T entity = null;
-        try {
-
-            // Get fields types to instantiate the entity
-
-            Constructor<?>[] constructors = clazz.getDeclaredConstructors();
-
-            Constructor<?> constructor = null;
-
-            for (Constructor<?> c : constructors) {
-                if (c.getParameterCount() > 0) {
-                    constructor = c;
-                    break;
-                }
-            }
-
-            Class<?>[] fieldsTypes = constructor.getParameterTypes();
-
-            // Set all fields to null to instantiate the entity
-            Object [] fieldsNull = new Object[fieldsTypes.length];
-            for (int i = 0; i < fieldsTypes.length; i++) {
-                fieldsNull[i] = null;
-            }
-
-            entity = clazz.getDeclaredConstructor(fieldsTypes).newInstance(fieldsNull);
-
-            Field[] fields = clazz.getDeclaredFields();
-
-            for (Field field : fields) {
-                if (field.isAnnotationPresent(Column.class)) {
-                    Column columnAnnotation = field.getAnnotation(Column.class);
-                    String columnName = columnAnnotation.name();
-                    field.setAccessible(true);
-                    if (document.containsKey(columnName)) {
-                        field.set(entity, document.get(columnName));
-                    }
-                } else if (field.isAnnotationPresent(PrimaryKey.class)) {
-                    PrimaryKey primaryKeyAnnotation = field.getAnnotation(PrimaryKey.class);
-                    String columnName = primaryKeyAnnotation.name();
-                    field.setAccessible(true);
-                    if (document.containsKey(columnName)) {
-                        field.set(entity, document.get(columnName));
-                    }
-                }
-            }
-        } catch (ReflectiveOperationException e) {
-            logger.severe("Error mapping Document to entity: " + e.getMessage());
-        }
-        return entity;
-    }
 
     public void getDatabaseEngineDate() {
         dbManager.getDate();
@@ -116,12 +59,12 @@ public class MongoDBGenericRepository<T> implements IRepository<T> {
             Document record = dbManager.find(collectionName, document);
 
             if (record != null) {
-                entity = mapDocumentToEntity(record);
+                entity = MongoDBRepositoryUtils.mapDocumentToEntity(record, clazz);
             } else {
-                logger.warning("Entity not found.");
+                logger.warn("Entity not found.");
             }
         } catch (Exception e) {
-            logger.severe("Error finding entity by id: " + e.getMessage());
+            logger.error("Error finding entity by id: " + e.getMessage());
         }
         return entity;
     }
@@ -133,10 +76,10 @@ public class MongoDBGenericRepository<T> implements IRepository<T> {
         try {
             List<Document> records = dbManager.findAll(collectionName);
             for (Document r : records) {
-                entities.add(mapDocumentToEntity(r));
+                entities.add(MongoDBRepositoryUtils.mapDocumentToEntity(r, clazz));
             }
         } catch (Exception e) {
-            logger.severe("Error finding all entities: " + e.getMessage());
+            logger.error("Error finding all entities: " + e.getMessage());
         }
         return entities;
     }
@@ -146,8 +89,9 @@ public class MongoDBGenericRepository<T> implements IRepository<T> {
 
         PrimaryKeyValues primaryKeyValues = RepositoryUtils.getPrimaryKeyValues(entity, clazz);
 
+
         if (existsById(primaryKeyValues)) {
-            logger.warning("A record with the same primary key already exists.");
+            logger.warn("A " + clazz.getSimpleName() + " record with the same primary key (" + primaryKeyValues.getValues().toString() + ") already exists.");
             return;
         }
 
@@ -172,7 +116,7 @@ public class MongoDBGenericRepository<T> implements IRepository<T> {
             dbManager.insert(collectionName, document);
             logger.info("Entity " + collectionName + " saved successfully.");
         } catch (Exception e) {
-            logger.severe("Error saving entity: " + e.getMessage());
+            logger.error("Error saving entity: " + e.getMessage());
         }
     }
 
@@ -180,7 +124,7 @@ public class MongoDBGenericRepository<T> implements IRepository<T> {
         RepositoryUtils.checkAnnotations(clazz);
 
         if (!existsById(id)) {
-            logger.warning("The entity does not exist.");
+            logger.warn("The entity does not exist.");
             return;
         }
 
@@ -195,7 +139,7 @@ public class MongoDBGenericRepository<T> implements IRepository<T> {
 
             logger.info("Entity " + collectionName + " deleted successfully.");
         } catch (Exception e) {
-            logger.severe("Error deleting entity: " + e.getMessage());
+            logger.error("Error deleting entity: " + e.getMessage());
         }
     }
 
@@ -205,7 +149,7 @@ public class MongoDBGenericRepository<T> implements IRepository<T> {
         PrimaryKeyValues primaryKeyValues = RepositoryUtils.getPrimaryKeyValues(entity, clazz);
 
         if (!existsById(primaryKeyValues)) {
-            logger.warning("The entity does not exist.");
+            logger.warn("The entity does not exist.");
             return;
         }
 
@@ -233,7 +177,7 @@ public class MongoDBGenericRepository<T> implements IRepository<T> {
 
             logger.info("Entity " + collectionName + " updated successfully.");
         } catch (Exception e) {
-            logger.severe("Error updating entity: " + e.getMessage());
+            logger.error("Error updating entity: " + e.getMessage());
         }
     }
 
@@ -249,7 +193,7 @@ public class MongoDBGenericRepository<T> implements IRepository<T> {
 
             return dbManager.find(collectionName, document) != null;
         } catch (Exception e) {
-            logger.severe("Error checking if entity exists: " + e.getMessage());
+            logger.error("Error checking if entity exists: " + e.getMessage());
         }
 
         return false;
