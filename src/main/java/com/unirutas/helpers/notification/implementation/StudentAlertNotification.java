@@ -2,25 +2,21 @@ package com.unirutas.helpers.notification.implementation;
 
 import com.unirutas.core.builder.query.interfaces.ICustomQueryBuilder;
 import com.unirutas.core.builder.query.types.Tuple;
+import com.unirutas.core.dependency.annotations.Inject;
 import com.unirutas.core.providers.CustomQueryBuilderProvider;
 import com.unirutas.helpers.notification.template.AlertNotification;
 import com.unirutas.models.*;
+import com.unirutas.services.implementation.StudentSubscriptionServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-
 public class StudentAlertNotification extends AlertNotification {
-    private final ICustomQueryBuilder queryBuilder = CustomQueryBuilderProvider.getFactory().createCustomQueryBuilder(StudentSubscription.class);
+    @Inject
+    private StudentSubscriptionServices studentSubscriptionServices;
     private final Logger logger = LoggerFactory.getLogger(StudentAlertNotification.class);
 
     private boolean shouldNotify(User user, Alert alert) {
-        List<List<Tuple<String, Object>>> results = queryBuilder.select()
-                .where("student_code", user.getCode())
-                .and("service_id", alert.getService())
-                .execute();
-
-        return !results.isEmpty();
+        return studentSubscriptionServices.existsById(user.getCode(), alert.getService());
     }
 
     @Override

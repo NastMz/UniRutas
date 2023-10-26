@@ -211,6 +211,8 @@ public class Main {
         Administrative administrative2 = new Administrative("Administrative 2", "160004322", "administrative2", "123");
 
         AlertNotification studentAlertNotification = new StudentAlertNotification();
+        dependencyInjector.injectDependencies(studentAlertNotification);
+
         AlertNotification administrativeAlertNotification = new AdministrativeAlertNotification();
 
         // Send notifications to students and administrative users.
