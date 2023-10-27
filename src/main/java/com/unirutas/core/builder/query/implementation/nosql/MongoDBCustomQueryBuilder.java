@@ -24,11 +24,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class MongoDBCustomQueryBuilder<T> implements ICustomQueryBuilder<T> {
+public class MongoDBCustomQueryBuilder implements ICustomQueryBuilder {
     private final MongoDBConnectionPool connectionPool;
     private Bson filter = new Document();
     private final String collectionName;
-    private final Class<T> clazz;
+    private final Class<?> clazz;
     private final Logger logger = LoggerFactory.getLogger(MongoDBCustomQueryBuilder.class);
     private final List<Class<?>> entities = new ArrayList<>();  // List of entities that have been joined
     private boolean hasJoined;
@@ -37,18 +37,18 @@ public class MongoDBCustomQueryBuilder<T> implements ICustomQueryBuilder<T> {
     private final List<JoinInfo> joinConditions = new ArrayList<>();
     private final List<ComposedJoinInfo> composedJoinConditions = new ArrayList<>();
 
-    public MongoDBCustomQueryBuilder(Class<T> clazz) {
+    public MongoDBCustomQueryBuilder(Class<?> clazz) {
         this.connectionPool = (MongoDBConnectionPool) ConnectionPoolFactoryProvider.getFactory().createConnectionPool();
         this.collectionName = MongoDBRepositoryUtils.getCollectionName(clazz);
         this.clazz = clazz;
         entities.add(clazz);
     }
 
-    public ICustomQueryBuilder<T> select() {
+    public ICustomQueryBuilder select() {
         return this;
     }
 
-    public ICustomQueryBuilder<T> fields(String... fields) {
+    public ICustomQueryBuilder fields(String... fields) {
         for (String field : fields) {
             QueryBuilderUtils.checkField(field, clazz);
             this.fields.add(field);
@@ -56,25 +56,25 @@ public class MongoDBCustomQueryBuilder<T> implements ICustomQueryBuilder<T> {
         return this;
     }
 
-    public ICustomQueryBuilder<T> where(String field, Object value) {
+    public ICustomQueryBuilder where(String field, Object value) {
         QueryBuilderUtils.checkField(field, clazz);
         filter = Filters.eq(field, value.toString());
         return this;
     }
 
-    public ICustomQueryBuilder<T> and(String field, Object value) {
+    public ICustomQueryBuilder and(String field, Object value) {
         QueryBuilderUtils.checkField(field, clazz);
         filter = Filters.and(filter, Filters.eq(field, value.toString()));
         return this;
     }
 
-    public ICustomQueryBuilder<T> or(String field, Object value) {
+    public ICustomQueryBuilder or(String field, Object value) {
         QueryBuilderUtils.checkField(field, clazz);
         filter = Filters.or(filter, Filters.eq(field, value.toString()));
         return this;
     }
 
-    public ICustomQueryBuilder<T> join(String sourceField, Class<?> targetEntity, String targetField) {
+    public ICustomQueryBuilder join(String sourceField, Class<?> targetEntity, String targetField) {
         QueryBuilderUtils.checkField(sourceField, clazz);
         QueryBuilderUtils.checkTable(targetEntity, targetField);
 
@@ -89,7 +89,7 @@ public class MongoDBCustomQueryBuilder<T> implements ICustomQueryBuilder<T> {
         return this;
     }
 
-    public ICustomQueryBuilder<T> join(Class<?> sourceEntity, String sourceField, Class<?> targetEntity, String targetField) {
+    public ICustomQueryBuilder join(Class<?> sourceEntity, String sourceField, Class<?> targetEntity, String targetField) {
         if (!hasJoined) {
             String message = "You can't chain a new join before calling the initial join.";
             logger.error(message);
@@ -114,7 +114,7 @@ public class MongoDBCustomQueryBuilder<T> implements ICustomQueryBuilder<T> {
         return this;
     }
 
-    public ICustomQueryBuilder<T> joinFields(String... fields) {
+    public ICustomQueryBuilder joinFields(String... fields) {
         // Ensure that a join operation has been called before using joinFields
         if (!hasJoined) {
             throw new IllegalArgumentException("You can't add join fields before calling the initial join.");

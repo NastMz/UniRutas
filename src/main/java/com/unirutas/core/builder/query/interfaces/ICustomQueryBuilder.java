@@ -6,15 +6,14 @@ import java.util.List;
 
 /**
  * Custom query builder interface. This interface can be used to create custom queries. It is used to create a custom query of a specific entity.
- * @param <T> The entity class.
  */
-public interface ICustomQueryBuilder<T> {
+public interface ICustomQueryBuilder {
 
     /**
      * Starts the query builder. Equivalent to SELECT * FROM table;
      * @return The query builder.
      */
-    ICustomQueryBuilder<T> select();
+    ICustomQueryBuilder select();
 
     /**
      * Selects a field in the query. Equivalent to SELECT field FROM table;
@@ -22,7 +21,7 @@ public interface ICustomQueryBuilder<T> {
      * @param fields The fields to select.
      * @return The query builder.
      */
-    ICustomQueryBuilder<T> fields(String... fields);
+    ICustomQueryBuilder fields(String... fields);
 
     /**
      * Adds a WHERE clause to the query. Equivalent to SELECT field FROM table WHERE field = value;
@@ -30,7 +29,7 @@ public interface ICustomQueryBuilder<T> {
      * @param value The value of the field.
      * @return The query builder.
      */
-    ICustomQueryBuilder<T> where(String field, Object value);
+    ICustomQueryBuilder where(String field, Object value);
 
     /**
      * Adds an AND clause to the query. Equivalent to SELECT field FROM table WHERE field = value AND field2 = value2;
@@ -38,7 +37,7 @@ public interface ICustomQueryBuilder<T> {
      * @param value The value of the field.
      * @return The query builder.
      */
-    ICustomQueryBuilder<T> and(String field, Object value);
+    ICustomQueryBuilder and(String field, Object value);
 
     /**
      * Adds an OR clause to the query. Equivalent to SELECT field FROM table WHERE field = value OR field2 = value2;
@@ -46,7 +45,7 @@ public interface ICustomQueryBuilder<T> {
      * @param value The value of the field.
      * @return The query builder.
      */
-    ICustomQueryBuilder<T> or(String field, Object value);
+    ICustomQueryBuilder or(String field, Object value);
 
     /**
      * Executes the query created by the query builder.
@@ -65,7 +64,7 @@ public interface ICustomQueryBuilder<T> {
      * @param targetField The field of the target table.
      * @return The query builder.
      */
-    ICustomQueryBuilder<T> join(String sourceField, Class<?> targetEntity, String targetField);
+    ICustomQueryBuilder join(String sourceField, Class<?> targetEntity, String targetField);
 
     /**
      * Adds an additional join clause to the query, allowing for nested joins.
@@ -97,7 +96,7 @@ public interface ICustomQueryBuilder<T> {
      * @return The query builder instance for method chaining.
      */
 
-    ICustomQueryBuilder<T> join(Class<?> sourceEntity, String sourceField, Class<?> targetEntity, String targetField);
+    ICustomQueryBuilder join(Class<?> sourceEntity, String sourceField, Class<?> targetEntity, String targetField);
 
     /**
      * Specifies the fields to select in a query that includes join clauses. This is equivalent to the SQL statement:
@@ -120,5 +119,5 @@ public interface ICustomQueryBuilder<T> {
      * @return The query builder instance for further construction of the query.
      */
 
-    ICustomQueryBuilder<T> joinFields(String... fields);
+    ICustomQueryBuilder joinFields(String... fields);
 }

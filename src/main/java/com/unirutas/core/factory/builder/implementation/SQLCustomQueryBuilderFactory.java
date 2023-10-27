@@ -5,7 +5,7 @@ import com.unirutas.core.builder.query.interfaces.ICustomQueryBuilder;
 import com.unirutas.core.factory.builder.interfaces.ICustomQueryBuilderFactory;
 
 public class SQLCustomQueryBuilderFactory implements ICustomQueryBuilderFactory {
-    public ICustomQueryBuilder<?> createCustomQueryBuilder(Class<?> clazz) {
-        return new SQLCustomQueryBuilder<>(clazz);
+    public ICustomQueryBuilder createCustomQueryBuilder(Class<?> clazz) {
+        return new SQLCustomQueryBuilder(clazz);
     }
 }
