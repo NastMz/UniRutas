@@ -226,6 +226,15 @@ public class Main {
         student.setSecurityPhrase("Salmon mon mon");
         studentController.updateUser(student);
 
+        // Controlador para la autenticacion
+        AuthenticationController authenticationController = new AuthenticationController();
+
+        // Autenticación basica
+        authenticationController.authenticate(student2);
+
+        // Autenticación con frase de seguridad
+        authenticationController.authenticate(student);
+
         connectionPool.closeAllConnections();
     }
 }

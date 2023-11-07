@@ -51,6 +51,11 @@ public class Student implements User {
     }
 
     @Override
+    public String getSecurityPhrase() {
+        return securityPhrase;
+    }
+
+    @Override
     public void changePassword(String newPassword) {
         this.password=newPassword;
     }
