@@ -33,7 +33,3 @@ build/
 
 ### Mac OS ###
 .DS_Store
-
-
-### database properties ###
-/src/main/resources/database.properties
