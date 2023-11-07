@@ -14,12 +14,15 @@ public class Administrative implements User {
     private final String username;
     @Column(name = "password")
     private String password;
+    @Column(name = "security_phrase")
+    private String securityPhrase;
 
     public Administrative(String name, String code, String username, String password) {
         this.name = name;
         this.code = code;
         this.username = username;
         this.password = password;
+        this.securityPhrase = null;
     }
 
     @Override
@@ -50,6 +53,11 @@ public class Administrative implements User {
     @Override
     public void changePassword(String newPassword) {
         this.password=newPassword;
+    }
+
+    @Override
+    public void setSecurityPhrase(String securityPhrase) {
+        this.securityPhrase = securityPhrase;
     }
 }
 

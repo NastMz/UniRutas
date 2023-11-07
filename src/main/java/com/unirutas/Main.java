@@ -219,6 +219,13 @@ public class Main {
         studentAlertNotification.notifyUsers(Arrays.asList(student, student2), alert);
         administrativeAlertNotification.notifyUsers(Arrays.asList(administrative, administrative2), alert);
 
+        // Chain of responsibility pattern usage example
+
+        // Actualizar un estudiante (volver a asignarle contraseña y agregarle la frase de seguridad)
+        student.changePassword("1234");
+        student.setSecurityPhrase("Salmon mon mon");
+        studentController.updateUser(student);
+
         connectionPool.closeAllConnections();
     }
 }

@@ -14,12 +14,15 @@ public class Student implements User {
     private String username;
     @Column(name = "password")
     private String password;
+    @Column(name = "security_phrase")
+    private String securityPhrase;
 
     public Student(String name, String code, String username, String password) {
         this.name = name;
         this.code = code;
         this.username = username;
         this.password = password;
+        this.securityPhrase = null;
     }
 
     @Override
@@ -50,6 +53,11 @@ public class Student implements User {
     @Override
     public void changePassword(String newPassword) {
         this.password=newPassword;
+    }
+
+    @Override
+    public void setSecurityPhrase(String securityPhrase) {
+        this.securityPhrase = securityPhrase;
     }
 }
 
