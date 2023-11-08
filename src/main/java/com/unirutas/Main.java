@@ -240,14 +240,20 @@ public class Main {
         // Autenticación con frase de seguridad
         authenticationController.authenticate(student, "psbobadilla", "1234", "Salmon mon mon");
 
+        // Actualizar un administrativo (agregarle número de telefono)
+        administrative.setPhone("3102021327");
+        adminController.updateUser(administrative);
 
+        // TODO: Autenticación con teléfono
+        authenticationController.authenticate(administrative, "ksmartinez", "321", null);
+
+//       TODO: DB brow
 //        ICustomQueryBuilder queryBuilder2 = CustomQueryBuilderProvider.getFactory().createCustomQueryBuilder(Student.class);
 //        List<List<Tuple<String, Object>>> test = queryBuilder2.select()
 //                .fields("password")
 //                .where("code", "160004314")
 //                .and("username", "mgranada")
 //                .execute();
-//
 //        System.out.println(test);
 //        User userTest = (User) test.get(0).get(0).getValue();
 //        System.out.println(userTest.getPassword());
