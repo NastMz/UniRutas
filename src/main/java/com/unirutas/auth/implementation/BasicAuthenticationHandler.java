@@ -15,12 +15,13 @@ public class BasicAuthenticationHandler implements AuthenticationHandler {
     private static final Logger logger = LoggerFactory.getLogger(BasicAuthenticationHandler.class);
 
     /**
-     * Authenticate the user with the provided username and password.
+     * Authenticates the user based on the provided credentials and additional factors.
      *
      * @param user           The user to authenticate.
      * @param username       The username for authentication.
      * @param password       The password for authentication.
-     * @param securityPhrase The security phrase for authentication (In this case is null).
+     * @param phone          The phone number for phone or multi-factor authentication. (In this case is null)
+     * @param securityPhrase The security phrase for security phrase or multi-factor authentication. (In this case is null)
      * @return True if authentication is successful, false otherwise.
      */
     @Override

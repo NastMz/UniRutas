@@ -6,10 +6,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
+/**
+ * The MultiFactorAuthenticationHandler is responsible for user authentication using a security phrase and phone.
+ * It checks username, password, security phrase, and phone for authentication.
+ */
 public class MultiFactorAuthenticationHandler implements AuthenticationHandler {
     private AuthenticationHandler successor;
     private static final Logger logger = LoggerFactory.getLogger(MultiFactorAuthenticationHandler.class);
 
+    /**
+     * Authenticates the user based on the provided credentials and additional factors.
+     *
+     * @param user           The user to authenticate.
+     * @param username       The username for authentication.
+     * @param password       The password for authentication.
+     * @param phone          The phone number for phone or multi-factor authentication.
+     * @param securityPhrase The security phrase for security phrase or multi-factor authentication.
+     * @return True if authentication is successful, false otherwise.
+     */
     @Override
     public boolean authenticate(User user, String username, String password, String phone, String securityPhrase) {
         if (user.getPhone() != null && user.getSecurityPhrase() != null){

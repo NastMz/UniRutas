@@ -15,12 +15,13 @@ public class SecurityPhraseAuthenticationHandler implements AuthenticationHandle
     private static final Logger logger = LoggerFactory.getLogger(SecurityPhraseAuthenticationHandler.class);
 
     /**
-     * Authenticate the user with the provided username, password, and security phrase.
+     * Authenticates the user based on the provided credentials and additional factors.
      *
      * @param user           The user to authenticate.
      * @param username       The username for authentication.
      * @param password       The password for authentication.
-     * @param securityPhrase The security phrase for authentication.
+     * @param phone          The phone number for phone or multi-factor authentication. (In this case is null)
+     * @param securityPhrase The security phrase for security phrase or multi-factor authentication.
      * @return True if authentication is successful, false otherwise.
      */
     @Override

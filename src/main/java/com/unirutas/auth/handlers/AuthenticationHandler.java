@@ -8,12 +8,13 @@ import com.unirutas.models.User;
  */
 public interface AuthenticationHandler {
     /**
-     * Authenticate the user with the given credentials.
+     * Authenticates the user based on the provided credentials and additional factors.
      *
      * @param user           The user to authenticate.
      * @param username       The username for authentication.
      * @param password       The password for authentication.
-     * @param securityPhrase The security phrase for authentication.
+     * @param phone          The phone number for phone or multi-factor authentication.
+     * @param securityPhrase The security phrase for security phrase or multi-factor authentication .
      * @return True if authentication is successful, false otherwise.
      */
     public boolean authenticate(User user, String username, String password, String phone, String securityPhrase);

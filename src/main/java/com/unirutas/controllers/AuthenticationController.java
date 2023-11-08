@@ -15,15 +15,6 @@ import com.unirutas.models.User;
 public class AuthenticationController implements AuthenticationHandler {
     private AuthenticationHandler successor;
 
-    /**
-     * Authenticate the user using the configured authentication handlers.
-     *
-     * @param user           The user to authenticate.
-     * @param username       The username for authentication.
-     * @param password       The password for authentication.
-     * @param securityPhrase The security phrase for authentication.
-     * @return True if authentication is successful, false otherwise.
-     */
     @Override
     public boolean authenticate(User user, String username, String password, String phone, String securityPhrase) {
         BasicAuthenticationHandler basicAuth = new BasicAuthenticationHandler();
