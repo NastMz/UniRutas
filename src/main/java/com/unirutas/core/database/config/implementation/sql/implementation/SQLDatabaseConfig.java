@@ -23,6 +23,7 @@ public class SQLDatabaseConfig implements ISQLDatabaseConfig {
     private static final Logger logger = LoggerFactory.getLogger(SQLDatabaseConfig.class);
 
     private SQLDatabaseConfig() {
+        logger.info("Loading database configuration");
         try (InputStream is = getClass().getClassLoader().getResourceAsStream("database.properties")) {
             Properties clientConfig = new Properties();
             clientConfig.load(is);
@@ -38,9 +39,11 @@ public class SQLDatabaseConfig implements ISQLDatabaseConfig {
         } catch (IOException e) {
             handleException("Error loading client database configuration", e);
         }
+        logger.info("Database configuration loaded");
     }
 
     private void loadInternalConfig(String databaseEngine) {
+        logger.info("Loading internal database configuration");
         try {
             SQLDatabaseEngine sqlDatabaseEngine = SQLDatabaseEngine.valueOf(databaseEngine.toUpperCase());
 
