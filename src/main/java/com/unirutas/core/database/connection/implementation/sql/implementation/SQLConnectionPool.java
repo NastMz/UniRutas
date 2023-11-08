@@ -26,6 +26,7 @@ public class SQLConnectionPool implements ISQLConnectionPool {
     private final List<Connection> usedConnections = new ArrayList<>();
 
     private SQLConnectionPool() {
+        logger.info("Initializing SQL connection pool");
         ISQLDatabaseConfig config = (ISQLDatabaseConfig) DatabaseConfigFactoryProvider.getFactory().createDatabaseConfig();
         this.url = config.getUrl();
         this.user = config.getUser();
@@ -37,6 +38,7 @@ public class SQLConnectionPool implements ISQLConnectionPool {
         } catch (ClassNotFoundException e) {
             handleException("Error loading the database driver", e);
         }
+        logger.info("SQL connection pool initialized");
     }
 
     public static synchronized IConnectionPool<Connection> getInstance() {
