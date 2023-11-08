@@ -6,10 +6,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
+/**
+ * The SecurityPhraseAuthenticationHandler is responsible for user authentication using a security phrase.
+ * It checks username, password, and security phrase for authentication.
+ */
 public class SecurityPhraseAuthenticationHandler implements AuthenticationHandler {
     private AuthenticationHandler successor;
     private static final Logger logger = LoggerFactory.getLogger(SecurityPhraseAuthenticationHandler.class);
 
+    /**
+     * Authenticate the user with the provided username, password, and security phrase.
+     *
+     * @param user           The user to authenticate.
+     * @param username       The username for authentication.
+     * @param password       The password for authentication.
+     * @param securityPhrase The security phrase for authentication.
+     * @return True if authentication is successful, false otherwise.
+     */
     @Override
     public boolean authenticate(User user, String username, String password, String securityPhrase) {
         if (user.getSecurityPhrase() != null){
