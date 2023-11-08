@@ -219,7 +219,12 @@ public class Main {
         studentAlertNotification.notifyUsers(Arrays.asList(student, student2), alert);
         administrativeAlertNotification.notifyUsers(Arrays.asList(administrative, administrative2), alert);
 
-        // Chain of responsibility pattern usage example
+        // Chain of responsibility pattern usage example (user authentication)
+        // In this example, we update a student's information and use the AuthenticationController to
+        // authenticate the student. Two authentication scenarios are showcased: basic authentication
+        // and security phrase authentication. The Chain of Responsibility pattern allows flexible and
+        // extensible authentication mechanisms by creating a chain of authentication handlers that are
+        // executed sequentially until successful authentication occurs or all handlers are exhausted.
 
         // Actualizar un estudiante (volver a asignarle contraseña y agregarle la frase de seguridad)
         student.changePassword("1234");
