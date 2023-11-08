@@ -1,8 +1,8 @@
 package com.unirutas.controllers;
 
-import com.unirutas.chain.of.responsibility.AuthenticationHandler;
-import com.unirutas.chain.of.responsibility.BasicAuthenticationHandler;
-import com.unirutas.chain.of.responsibility.SecurityPhraseAuthenticationHandler;
+import com.unirutas.auth.handlers.AuthenticationHandler;
+import com.unirutas.auth.implementation.BasicAuthenticationHandler;
+import com.unirutas.auth.implementation.SecurityPhraseAuthenticationHandler;
 import com.unirutas.models.User;
 
 public class AuthenticationController implements AuthenticationHandler {

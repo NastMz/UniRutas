@@ -1,20 +1,20 @@
-package com.unirutas.chain.of.responsibility;
+package com.unirutas.auth.implementation;
 
+import com.unirutas.auth.handlers.AuthenticationHandler;
 import com.unirutas.models.User;
 
 import javax.swing.*;
 
-public class SecurityPhraseAuthenticationHandler implements AuthenticationHandler{
+public class BasicAuthenticationHandler implements AuthenticationHandler {
     private AuthenticationHandler successor;
 
     @Override
     public boolean authenticate(User user) {
-        if (user.getSecurityPhrase() != null){
+        if (user.getSecurityPhrase() == null){
             String username = JOptionPane.showInputDialog(null, "Ingrese su nombre de usuario: ");
             String password = JOptionPane.showInputDialog(null, "Ingrese su contraseña: ");
-            String securityPhrase = JOptionPane.showInputDialog(null, "Ingrese su frase de seguridad: ");
 
-            if (user.getUsername().equals(username) && user.getPassword().equals(password) && user.getSecurityPhrase().equals(securityPhrase)){
+            if (user.getUsername().equals(username) && user.getPassword().equals(password)){
                 System.out.println("Autenticación exitosa!!");
                 return true;
             } else {

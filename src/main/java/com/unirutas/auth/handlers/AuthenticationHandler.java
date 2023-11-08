@@ -1,4 +1,4 @@
-package com.unirutas.chain.of.responsibility;
+package com.unirutas.auth.handlers;
 
 import com.unirutas.models.User;
 
