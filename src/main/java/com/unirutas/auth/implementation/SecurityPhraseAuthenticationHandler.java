@@ -27,7 +27,7 @@ public class SecurityPhraseAuthenticationHandler implements AuthenticationHandle
     public boolean authenticate(User user, String username, String password, String securityPhrase) {
         if (user.getSecurityPhrase() != null){
             if (user.getUsername().equals(username) && user.getPassword().equals(password) && user.getSecurityPhrase().equals(securityPhrase)){
-                String message = "Successful authentication!!";
+                String message = "Successful authentication for "+ user.getName()+".";
                 logger.info(message);
                 return true;
             } else {
