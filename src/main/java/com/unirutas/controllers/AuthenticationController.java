@@ -2,6 +2,8 @@ package com.unirutas.controllers;
 
 import com.unirutas.auth.handlers.AuthenticationHandler;
 import com.unirutas.auth.implementation.BasicAuthenticationHandler;
+import com.unirutas.auth.implementation.MultiFactorAuthenticationHandler;
+import com.unirutas.auth.implementation.PhoneAuthenticationHandler;
 import com.unirutas.auth.implementation.SecurityPhraseAuthenticationHandler;
 import com.unirutas.models.User;
 
@@ -23,14 +25,20 @@ public class AuthenticationController implements AuthenticationHandler {
      * @return True if authentication is successful, false otherwise.
      */
     @Override
-    public boolean authenticate(User user, String username, String password, String securityPhrase) {
-        BasicAuthenticationHandler basic = new BasicAuthenticationHandler();
-        setSuccessor(basic);
+    public boolean authenticate(User user, String username, String password, String phone, String securityPhrase) {
+        BasicAuthenticationHandler basicAuth = new BasicAuthenticationHandler();
+        setSuccessor(basicAuth);
 
-        SecurityPhraseAuthenticationHandler secure = new SecurityPhraseAuthenticationHandler();
-        basic.setSuccessor(secure);
+        SecurityPhraseAuthenticationHandler phraseAuth = new SecurityPhraseAuthenticationHandler();
+        basicAuth.setSuccessor(phraseAuth);
 
-        return successor.authenticate(user, username, password, securityPhrase);
+        PhoneAuthenticationHandler phoneAuth = new PhoneAuthenticationHandler();
+        phraseAuth.setSuccessor(phoneAuth);
+
+        MultiFactorAuthenticationHandler multiFactorAuth = new MultiFactorAuthenticationHandler();
+        phoneAuth.setSuccessor(multiFactorAuth);
+
+        return successor.authenticate(user, username, password, phone, securityPhrase);
     }
 
     @Override

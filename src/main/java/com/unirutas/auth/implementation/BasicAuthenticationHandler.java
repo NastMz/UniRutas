@@ -24,19 +24,18 @@ public class BasicAuthenticationHandler implements AuthenticationHandler {
      * @return True if authentication is successful, false otherwise.
      */
     @Override
-    public boolean authenticate(User user, String username, String password, String securityPhrase) {
-        if (user.getSecurityPhrase() == null){
+    public boolean authenticate(User user, String username, String password, String phone, String securityPhrase) {
+        if (user.getSecurityPhrase() == null && user.getPhone() == null){
+            logger.info("Validating credentials...");
             if (user.getUsername().equals(username) && user.getPassword().equals(password)){
-                String message = "Successful authentication for "+ user.getName()+".";
-                logger.info(message);
+                logger.info("Successful authentication for "+ user.getName()+".");
                 return true;
             } else {
-                String message = "Authentication failed...";
-                logger.error(message);
+                logger.error("Authentication failed...");
                 return false;
             }
         } else {
-            return successor.authenticate(user, username, password, securityPhrase);
+            return successor.authenticate(user, username, password, phone, securityPhrase);
         }
     }
 

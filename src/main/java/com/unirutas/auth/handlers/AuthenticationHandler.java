@@ -16,7 +16,7 @@ public interface AuthenticationHandler {
      * @param securityPhrase The security phrase for authentication.
      * @return True if authentication is successful, false otherwise.
      */
-    public boolean authenticate(User user, String username, String password, String securityPhrase);
+    public boolean authenticate(User user, String username, String password, String phone, String securityPhrase);
 
     /**
      * Get the next authentication handler in the chain.

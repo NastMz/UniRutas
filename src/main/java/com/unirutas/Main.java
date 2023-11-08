@@ -235,17 +235,25 @@ public class Main {
         AuthenticationController authenticationController = new AuthenticationController();
 
         // Autenticación basica
-        authenticationController.authenticate(student2, "mgranada", "123", null);
+        authenticationController.authenticate(student2, "mgranada", "123", null, null);
 
         // Autenticación con frase de seguridad
-        authenticationController.authenticate(student, "psbobadilla", "1234", "Salmon mon mon");
+        authenticationController.authenticate(student, "psbobadilla", "1234", null,  "Salmon mon mon");
 
         // Actualizar un administrativo (agregarle número de telefono)
         administrative.setPhone("3102021327");
         adminController.updateUser(administrative);
 
-        // TODO: Autenticación con teléfono
-        authenticationController.authenticate(administrative, "ksmartinez", "321", null);
+        // Autenticación con teléfono
+        authenticationController.authenticate(administrative, "ksmartinez", "123", "3102021327", null);
+
+        // Actualizar un administrativo (agregarle frase de seguridad)
+        administrative.setSecurityPhrase("GTA VI");
+        adminController.updateUser(administrative);
+
+        // Autenticación multifactor
+        authenticationController.authenticate(administrative, "ksmartinez", "123", "3102021327", "GTA VI");
+
 
 //       TODO: DB brow
 //        ICustomQueryBuilder queryBuilder2 = CustomQueryBuilderProvider.getFactory().createCustomQueryBuilder(Student.class);
