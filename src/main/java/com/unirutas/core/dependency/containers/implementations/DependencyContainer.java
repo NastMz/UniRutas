@@ -29,6 +29,8 @@ public class DependencyContainer implements IDependencyContainer {
         injects = new HashMap<>();
         List<Class<?>> classes = DependencyScanner.scanClasses();
         initializeContainer(classes);
+
+        logger.debug("Initializing sub-dependencies");
         for (Object clazz : injects.values()) {
             initializeSubDependency(clazz);
         }
@@ -59,6 +61,7 @@ public class DependencyContainer implements IDependencyContainer {
     }
 
     private void initializeContainer(List<Class<?>> classes) {
+        logger.debug("Initializing dependency container");
         for (Class<?> clazz : classes) {
             if (clazz.isAnnotationPresent(Singleton.class)) {
                 initializeSingleton(clazz);
@@ -80,13 +83,21 @@ public class DependencyContainer implements IDependencyContainer {
                 }
             }
         }
+        logger.debug("Dependency container initialized");
+        logger.debug("Singleton instances: " + singletonInstances.toString());
+        logger.debug("Factory instances: " + factoryInstances.toString());
+        logger.debug("Repositories: " + repositories.toString());
+        logger.debug("Injects: " + injects.toString());
+        logger.debug("Implementations: " + implementations.toString());
     }
 
     public void initializeSubDependency(Object clazz) {
+        logger.debug("Initializing sub-dependency of class " + clazz.getClass().getSimpleName());
         Field[] fields = clazz.getClass().getDeclaredFields();
 
         for (Field field : fields) {
             if (field.isAnnotationPresent(Inject.class)) {
+                logger.debug("Initializing sub-dependency of field " + field.getName());
                 String implementationClassName = field.getAnnotation(Inject.class).value();
                 field.setAccessible(true);
                 try {
@@ -105,11 +116,14 @@ public class DependencyContainer implements IDependencyContainer {
                     logger.error(message);
                     throw new RuntimeException(message, e);
                 }
+                logger.debug("Sub-dependency of field " + field.getName() + " initialized");
             }
         }
+        logger.debug("Sub-dependency of class " + clazz.getClass().getSimpleName() + " initialized");
     }
 
     private void initializeSingleton(Class<?> clazz) {
+        logger.debug("Initializing singleton instance of class " + clazz.getName());
         try {
             Field[] fields = clazz.getDeclaredFields();
 
@@ -127,6 +141,7 @@ public class DependencyContainer implements IDependencyContainer {
     }
 
     private void initializeFactory(Class<?> clazz) {
+        logger.debug("Initializing factory instance of class " + clazz.getName());
         try {
             Field[] fields = clazz.getDeclaredFields();
 
@@ -144,6 +159,7 @@ public class DependencyContainer implements IDependencyContainer {
     }
 
     private void initializeRepository(Class<?> clazz) {
+        logger.debug("Initializing repository instance of class " + clazz.getName());
         try {
             repositories.put(clazz, clazz.getDeclaredConstructor().newInstance());
         } catch (Exception e) {
@@ -154,6 +170,7 @@ public class DependencyContainer implements IDependencyContainer {
     }
 
     private void initializeInject(Class<?> clazz) {
+        logger.debug("Initializing inject instance of class " + clazz.getName());
         try {
             injects.put(clazz, clazz.getDeclaredConstructor().newInstance());
         } catch (Exception e) {
@@ -164,6 +181,7 @@ public class DependencyContainer implements IDependencyContainer {
     }
 
     public void initializeImplementation(Class<?> clazz) {
+        logger.debug("Initializing implementation instance of class " + clazz.getName());
         try {
             implementations.put(clazz, clazz.getDeclaredConstructor().newInstance());
         } catch (Exception e) {

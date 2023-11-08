@@ -14,7 +14,9 @@ public class DependencyValidator {
     private static final Logger logger = LoggerFactory.getLogger(DependencyValidator.class);
 
     public static void validate(List<Class<?>> classes) {
+        logger.info("Validating classes for dependency injection.");
         for (Class<?> clazz : classes) {
+            logger.debug("Validating class " + clazz.getName());
             validateRepository(clazz);
             validateFactory(clazz);
             validateSingleton(clazz);
