@@ -9,14 +9,14 @@ public class AuthenticationController implements AuthenticationHandler {
     private AuthenticationHandler successor;
 
     @Override
-    public boolean authenticate(User user) {
+    public boolean authenticate(User user, String username, String password, String securityPhrase) {
         BasicAuthenticationHandler basic = new BasicAuthenticationHandler();
         setSuccessor(basic);
 
         SecurityPhraseAuthenticationHandler secure = new SecurityPhraseAuthenticationHandler();
         basic.setSuccessor(secure);
 
-        return successor.authenticate(user);
+        return successor.authenticate(user, username, password, securityPhrase);
     }
 
     @Override

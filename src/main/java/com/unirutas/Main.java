@@ -230,10 +230,22 @@ public class Main {
         AuthenticationController authenticationController = new AuthenticationController();
 
         // Autenticación basica
-        authenticationController.authenticate(student2);
+        authenticationController.authenticate(student2, "mgranada", "123", null);
 
         // Autenticación con frase de seguridad
-        authenticationController.authenticate(student);
+        authenticationController.authenticate(student, "psbobadilla", "1234", "Salmon mon mon");
+
+
+//        ICustomQueryBuilder queryBuilder2 = CustomQueryBuilderProvider.getFactory().createCustomQueryBuilder(Student.class);
+//        List<List<Tuple<String, Object>>> test = queryBuilder2.select()
+//                .fields("password")
+//                .where("code", "160004314")
+//                .and("username", "mgranada")
+//                .execute();
+//
+//        System.out.println(test);
+//        User userTest = (User) test.get(0).get(0).getValue();
+//        System.out.println(userTest.getPassword());
 
         connectionPool.closeAllConnections();
     }
