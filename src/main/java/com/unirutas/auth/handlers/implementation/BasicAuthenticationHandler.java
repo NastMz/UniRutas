@@ -1,9 +1,8 @@
 package com.unirutas.auth.handlers.implementation;
 
 import com.unirutas.auth.handlers.interfaces.IAuthenticationHandler;
+import com.unirutas.auth.validators.BasicValidators;
 import com.unirutas.models.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -12,7 +11,6 @@ import org.slf4j.LoggerFactory;
  */
 public class BasicAuthenticationHandler implements IAuthenticationHandler {
     private IAuthenticationHandler successor;
-    private static final Logger logger = LoggerFactory.getLogger(BasicAuthenticationHandler.class);
 
     /**
      * Authenticates the user based on the provided credentials and additional factors.
@@ -26,15 +24,8 @@ public class BasicAuthenticationHandler implements IAuthenticationHandler {
      */
     @Override
     public boolean authenticate(User user, String username, String password, String phone, String securityPhrase) {
-        if (user.getSecurityPhrase() == null && user.getPhone() == null){
-            logger.info("Validating credentials...");
-            if (user.getUsername().equals(username) && user.getPassword().equals(password)){
-                logger.info("Successful authentication for "+ user.getName()+".");
-                return true;
-            } else {
-                logger.error("Authentication failed...");
-                return false;
-            }
+        if (BasicValidators.validateIsBasic(user)){
+            return BasicValidators.validateCredentials(user, username, password);
         } else {
             return successor.authenticate(user, username, password, phone, securityPhrase);
         }

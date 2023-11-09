@@ -1,6 +1,7 @@
 package com.unirutas.auth.handlers.implementation;
 
 import com.unirutas.auth.handlers.interfaces.IAuthenticationHandler;
+import com.unirutas.auth.validators.SecurityPhraseValidators;
 import com.unirutas.models.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +13,6 @@ import org.slf4j.LoggerFactory;
  */
 public class SecurityPhraseAuthenticationHandler implements IAuthenticationHandler {
     private IAuthenticationHandler successor;
-    private static final Logger logger = LoggerFactory.getLogger(SecurityPhraseAuthenticationHandler.class);
 
     /**
      * Authenticates the user based on the provided credentials and additional factors.
@@ -26,16 +26,8 @@ public class SecurityPhraseAuthenticationHandler implements IAuthenticationHandl
      */
     @Override
     public boolean authenticate(User user, String username, String password, String phone, String securityPhrase) {
-        if (user.getSecurityPhrase() != null && user.getPhone() == null){
-            logger.info("Validating credentials and security phrase...");
-            if (user.getUsername().equals(username) && user.getPassword().equals(password) && user.getSecurityPhrase().equals(securityPhrase)){
-                String message = "Successful authentication for "+ user.getName()+".";
-                logger.info("Successful authentication for "+ user.getName()+".");
-                return true;
-            } else {
-                logger.error("Authentication failed...");
-                return false;
-            }
+        if (SecurityPhraseValidators.validateIsSecurityPhrase(user)){
+            return SecurityPhraseValidators.validateCredentialsAndSecurityPhrase(user, username, password, securityPhrase);
         } else {
             return successor.authenticate(user, username, password, phone, securityPhrase);
         }

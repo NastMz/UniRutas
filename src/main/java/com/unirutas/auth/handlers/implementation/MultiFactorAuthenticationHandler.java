@@ -1,6 +1,7 @@
 package com.unirutas.auth.handlers.implementation;
 
 import com.unirutas.auth.handlers.interfaces.IAuthenticationHandler;
+import com.unirutas.auth.validators.MultiFactorValidators;
 import com.unirutas.models.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +13,6 @@ import org.slf4j.LoggerFactory;
  */
 public class MultiFactorAuthenticationHandler implements IAuthenticationHandler {
     private IAuthenticationHandler successor;
-    private static final Logger logger = LoggerFactory.getLogger(MultiFactorAuthenticationHandler.class);
 
     /**
      * Authenticates the user based on the provided credentials and additional factors.
@@ -26,15 +26,8 @@ public class MultiFactorAuthenticationHandler implements IAuthenticationHandler 
      */
     @Override
     public boolean authenticate(User user, String username, String password, String phone, String securityPhrase) {
-        if (user.getPhone() != null && user.getSecurityPhrase() != null){
-            logger.info("Validating credentials, phone and security phrase...");
-            if (user.getUsername().equals(username) && user.getPassword().equals(password) && user.getPhone().equals(phone) && user.getSecurityPhrase().equals(securityPhrase)){
-                logger.info("Successful authentication for "+ user.getName()+".");
-                return true;
-            } else {
-                logger.error("Authentication failed...");
-                return false;
-            }
+        if (MultiFactorValidators.validateIsMultiFactor(user)){
+           return MultiFactorValidators.validateCredentialsAndMultiFactor(user, username, password, phone, securityPhrase);
         } else {
             return successor.authenticate(user, username, password, phone, securityPhrase);
         }

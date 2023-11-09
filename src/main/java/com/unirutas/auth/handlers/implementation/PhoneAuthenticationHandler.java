@@ -1,9 +1,8 @@
 package com.unirutas.auth.handlers.implementation;
 
 import com.unirutas.auth.handlers.interfaces.IAuthenticationHandler;
+import com.unirutas.auth.validators.PhoneValidators;
 import com.unirutas.models.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -12,7 +11,6 @@ import org.slf4j.LoggerFactory;
  */
 public class PhoneAuthenticationHandler implements IAuthenticationHandler {
     private IAuthenticationHandler successor;
-    private static final Logger logger = LoggerFactory.getLogger(PhoneAuthenticationHandler.class);
 
     /**
      * Authenticates the user based on the provided credentials and additional factors.
@@ -26,15 +24,8 @@ public class PhoneAuthenticationHandler implements IAuthenticationHandler {
      */
     @Override
     public boolean authenticate(User user, String username, String password, String phone, String securityPhrase) {
-        if (user.getPhone() != null && user.getSecurityPhrase() == null){
-            logger.info("Validating credentials and phone...");
-            if (user.getUsername().equals(username) && user.getPassword().equals(password) && user.getPhone().equals(phone)){
-                logger.info("Successful authentication for "+ user.getName()+".");
-                return true;
-            } else {
-                logger.error("Authentication failed...");
-                return false;
-            }
+        if (PhoneValidators.validateIsPhone(user)){
+            return PhoneValidators.validateCredentialsAndPhone(user, username, password, phone);
         } else {
             return successor.authenticate(user, username, password, phone, securityPhrase);
         }
