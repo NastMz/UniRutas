@@ -11,5 +11,6 @@ public interface UserServices<T> {
     T findByCode(String code);
     boolean existsByCode(String code);
     List<T> findAll();
+    T findByUsername(String username);
 
 }

@@ -1,10 +1,8 @@
 package com.unirutas.services.implementation;
 
-import com.unirutas.core.database.repository.interfaces.IRepository;
 import com.unirutas.core.database.repository.utils.PrimaryKeyValues;
 import com.unirutas.core.dependency.annotations.Implementation;
 import com.unirutas.core.dependency.annotations.Inject;
-import com.unirutas.core.providers.RepositoryFactoryProvider;
 import com.unirutas.models.Administrative;
 import com.unirutas.models.User;
 import com.unirutas.repository.AdministrativeRepository;
@@ -43,5 +41,9 @@ public class AdministrativeServices implements UserServices<Administrative> {
 
     public List<Administrative> findAll() {
         return administrativeRepository.findAll();
+    }
+
+    public Administrative findByUsername(String username) {
+        return administrativeRepository.findByUsername(username);
     }
 }

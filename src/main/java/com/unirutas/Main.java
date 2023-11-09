@@ -236,36 +236,39 @@ public class Main {
         AuthenticationController authenticationController = new AuthenticationController();
 
         // Autenticación basica
-        authenticationController.authenticate(student2, "mgranada", "123", null, null);
+        authenticationController.authenticate(studentController.findByUsername("mgranada"),
+                "mgranada",
+                "123",
+                null,
+                null);
 
         // Autenticación con frase de seguridad
-        authenticationController.authenticate(student, "psbobadilla", "1234", null,  "Salmon mon mon");
+        authenticationController.authenticate(studentController.findByUsername("psbobadilla"),
+                "psbobadilla",
+                "1234",
+                null,
+                "Salmon mon mon");
 
         // Actualizar un administrativo (agregarle número de telefono)
         administrative.setPhone("3102021327");
         adminController.updateUser(administrative);
 
         // Autenticación con teléfono
-        authenticationController.authenticate(administrative, "ksmartinez", "123", "3102021327", null);
+        authenticationController.authenticate(adminController.findByUsername("ksmartinez"),
+                "ksmartinez",
+                "123",
+                "3102021327",
+                null);
 
         // Actualizar un administrativo (agregarle frase de seguridad)
         administrative.setSecurityPhrase("GTA VI");
         adminController.updateUser(administrative);
 
         // Autenticación multifactor
-        authenticationController.authenticate(administrative, "ksmartinez", "123", "3102021327", "GTA VI");
-
-//       TODO: DB brow
-//        ICustomQueryBuilder queryBuilder2 = CustomQueryBuilderProvider.getFactory().createCustomQueryBuilder(Student.class);
-//        List<List<Tuple<String, Object>>> test = queryBuilder2.select()
-//                .fields("password")
-//                .where("code", "160004314")
-//                .and("username", "mgranada")
-//                .execute();
-//        System.out.println(test);
-//        User userTest = (User) test.get(0).get(0).getValue();
-//        System.out.println(userTest.getPassword());
-
-        connectionPool.closeAllConnections();
+        authenticationController.authenticate(adminController.findByUsername("ksmartinez"),
+                "ksmartinez",
+                "123",
+                "3102021327",
+                "GTA VI");
     }
 }
