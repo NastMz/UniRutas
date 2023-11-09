@@ -1,10 +1,10 @@
 package com.unirutas.controllers;
 
-import com.unirutas.auth.handlers.AuthenticationHandler;
-import com.unirutas.auth.implementation.BasicAuthenticationHandler;
-import com.unirutas.auth.implementation.MultiFactorAuthenticationHandler;
-import com.unirutas.auth.implementation.PhoneAuthenticationHandler;
-import com.unirutas.auth.implementation.SecurityPhraseAuthenticationHandler;
+import com.unirutas.auth.handlers.interfaces.IAuthenticationHandler;
+import com.unirutas.auth.handlers.implementation.BasicAuthenticationHandler;
+import com.unirutas.auth.handlers.implementation.MultiFactorAuthenticationHandler;
+import com.unirutas.auth.handlers.implementation.PhoneAuthenticationHandler;
+import com.unirutas.auth.handlers.implementation.SecurityPhraseAuthenticationHandler;
 import com.unirutas.models.User;
 
 
@@ -12,8 +12,8 @@ import com.unirutas.models.User;
  * The AuthenticationController orchestrates the authentication process using a chain of responsibility.
  * It configures authentication handlers and delegates authentication to them.
  */
-public class AuthenticationController implements AuthenticationHandler {
-    private AuthenticationHandler successor;
+public class AuthenticationController implements IAuthenticationHandler {
+    private IAuthenticationHandler successor;
 
     @Override
     public boolean authenticate(User user, String username, String password, String phone, String securityPhrase) {
@@ -33,12 +33,12 @@ public class AuthenticationController implements AuthenticationHandler {
     }
 
     @Override
-    public AuthenticationHandler getSuccessor() {
+    public IAuthenticationHandler getSuccessor() {
         return successor;
     }
 
     @Override
-    public void setSuccessor(AuthenticationHandler successor) {
+    public void setSuccessor(IAuthenticationHandler successor) {
         this.successor = successor;
     }
 }

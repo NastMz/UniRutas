@@ -1,4 +1,4 @@
-package com.unirutas.auth.handlers;
+package com.unirutas.auth.handlers.interfaces;
 
 import com.unirutas.models.User;
 
@@ -6,7 +6,7 @@ import com.unirutas.models.User;
  * The AuthenticationHandler interface defines the contract for handling user authentication.
  * Implementing classes should provide authentication logic and support chaining to the next handler.
  */
-public interface AuthenticationHandler {
+public interface IAuthenticationHandler {
     /**
      * Authenticates the user based on the provided credentials and additional factors.
      *
@@ -24,12 +24,12 @@ public interface AuthenticationHandler {
      *
      * @return The next authentication handler or null if this is the last handler.
      */
-    public AuthenticationHandler getSuccessor();
+    public IAuthenticationHandler getSuccessor();
 
     /**
      * Set the next authentication handler in the chain.
      *
      * @param successor The next authentication handler to set.
      */
-    public void setSuccessor(AuthenticationHandler successor);
+    public void setSuccessor(IAuthenticationHandler successor);
 }
