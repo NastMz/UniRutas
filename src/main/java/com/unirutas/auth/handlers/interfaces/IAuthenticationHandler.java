@@ -27,7 +27,7 @@ public interface IAuthenticationHandler {
     public IAuthenticationHandler getSuccessor();
 
     /**
-     * Set the next authentication handler in the chain.
+     * Set the next authentication handler in the chain of responsibility.
      *
      * @param successor The next authentication handler to set.
      */

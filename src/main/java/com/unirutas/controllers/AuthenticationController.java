@@ -1,44 +1,35 @@
 package com.unirutas.controllers;
 
 import com.unirutas.auth.handlers.interfaces.IAuthenticationHandler;
-import com.unirutas.auth.handlers.implementation.BasicAuthenticationHandler;
-import com.unirutas.auth.handlers.implementation.MultiFactorAuthenticationHandler;
-import com.unirutas.auth.handlers.implementation.PhoneAuthenticationHandler;
-import com.unirutas.auth.handlers.implementation.SecurityPhraseAuthenticationHandler;
+import com.unirutas.auth.handlers.implementation.DefaultAuthenticationHandler;
 import com.unirutas.models.User;
 
 
 /**
- * The AuthenticationController orchestrates the authentication process using a chain of responsibility.
- * It configures authentication handlers and delegates authentication to them.
+ * Controller responsible for user authentication using the chain of responsibility.
  */
-public class AuthenticationController implements IAuthenticationHandler {
-    private IAuthenticationHandler successor;
+public class AuthenticationController {
+    private IAuthenticationHandler authenticationHandler;
 
-    @Override
+    /**
+     * Constructor for the AuthenticationController class.
+     * Initializes the controller with a default implementation of AuthenticationHandler.
+     */
+    public AuthenticationController() {
+        authenticationHandler = new DefaultAuthenticationHandler();
+    }
+
+    /**
+     * Method to authenticate the user using the chain of responsibility.
+     *
+     * @param user           The User object representing the user.
+     * @param username       The username provided for authentication.
+     * @param password       The password provided for authentication.
+     * @param phone          The phone number provided for authentication.
+     * @param securityPhrase The security phrase provided for authentication.
+     * @return true if authentication is successful, false otherwise.
+     */
     public boolean authenticate(User user, String username, String password, String phone, String securityPhrase) {
-        BasicAuthenticationHandler basicAuth = new BasicAuthenticationHandler();
-        setSuccessor(basicAuth);
-
-        SecurityPhraseAuthenticationHandler phraseAuth = new SecurityPhraseAuthenticationHandler();
-        basicAuth.setSuccessor(phraseAuth);
-
-        PhoneAuthenticationHandler phoneAuth = new PhoneAuthenticationHandler();
-        phraseAuth.setSuccessor(phoneAuth);
-
-        MultiFactorAuthenticationHandler multiFactorAuth = new MultiFactorAuthenticationHandler();
-        phoneAuth.setSuccessor(multiFactorAuth);
-
-        return successor.authenticate(user, username, password, phone, securityPhrase);
-    }
-
-    @Override
-    public IAuthenticationHandler getSuccessor() {
-        return successor;
-    }
-
-    @Override
-    public void setSuccessor(IAuthenticationHandler successor) {
-        this.successor = successor;
+        return authenticationHandler.authenticate(user, username, password, phone, securityPhrase);
     }
 }
