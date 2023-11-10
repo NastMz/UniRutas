@@ -219,6 +219,56 @@ public class Main {
         studentAlertNotification.notifyUsers(Arrays.asList(student, student2), alert);
         administrativeAlertNotification.notifyUsers(Arrays.asList(administrative, administrative2), alert);
 
-        connectionPool.closeAllConnections();
+        // Chain of responsibility pattern usage example (user authentication)
+        // In this example, we update a user's information and utilize the AuthenticationController to
+        // authenticate the user. Various authentication scenarios are showcased, including basic authentication,
+        // security phrase authentication, multi-factor authentication, and phone authentication. The Chain of
+        // Responsibility pattern facilitates a flexible and extensible authentication mechanism by creating a chain
+        // of authentication handlers that are executed sequentially until successful authentication occurs or all
+        // handlers are exhausted.
+
+        // Actualizar un estudiante (volver a asignarle contraseña y agregarle la frase de seguridad)
+        student.changePassword("1234");
+        student.setSecurityPhrase("Salmon mon mon");
+        studentController.updateUser(student);
+
+        // Controlador para la autenticacion
+        AuthenticationController authenticationController = new AuthenticationController();
+
+        // Autenticación basica
+        authenticationController.authenticate(studentController.findByUsername("mgranada"),
+                "mgranada",
+                "123",
+                null,
+                null);
+
+        // Autenticación con frase de seguridad
+        authenticationController.authenticate(studentController.findByUsername("psbobadilla"),
+                "psbobadilla",
+                "1234",
+                null,
+                "Salmon mon mon");
+
+        // Actualizar un administrativo (agregarle número de telefono)
+        administrative.setPhone("3102021327");
+        adminController.updateUser(administrative);
+
+        // Autenticación con teléfono
+        authenticationController.authenticate(adminController.findByUsername("ksmartinez"),
+                "ksmartinez",
+                "123",
+                "3102021327",
+                null);
+
+        // Actualizar un administrativo (agregarle frase de seguridad)
+        administrative.setSecurityPhrase("GTA VI");
+        adminController.updateUser(administrative);
+
+        // Autenticación multifactor
+        authenticationController.authenticate(adminController.findByUsername("ksmartinez"),
+                "ksmartinez",
+                "123",
+                "3102021327",
+                "GTA VI");
     }
 }

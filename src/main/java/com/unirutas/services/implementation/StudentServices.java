@@ -41,4 +41,8 @@ public class StudentServices implements UserServices<Student> {
     public List<Student> findAll() {
         return studentRepository.findAll();
     }
+
+    public Student findByUsername(String username) {
+        return studentRepository.findByUsername(username);
+    }
 }
