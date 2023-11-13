@@ -46,6 +46,9 @@ public class Main {
         UserController studentController = new UserController(studentServices);
         UserController adminController = new UserController(administrativeServices);
 
+        dependencyInjector.injectDependencies(studentController);
+        dependencyInjector.injectDependencies(adminController);
+
         BusController busController = new BusController();
 
         JourneyController journeyController = new JourneyController();
@@ -270,5 +273,10 @@ public class Main {
                 "123",
                 "3102021327",
                 "GTA VI");
+
+        System.out.println(administrative.getPassword());
+        adminController.changePassword(administrative, "456");
+        System.out.println(administrative.getPassword());
+
     }
 }
