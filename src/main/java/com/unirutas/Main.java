@@ -46,6 +46,9 @@ public class Main {
         UserController studentController = new UserController(studentServices);
         UserController adminController = new UserController(administrativeServices);
 
+        dependencyInjector.injectDependencies(studentController);
+        dependencyInjector.injectDependencies(adminController);
+
         BusController busController = new BusController();
 
         JourneyController journeyController = new JourneyController();
@@ -270,5 +273,15 @@ public class Main {
                 "123",
                 "3102021327",
                 "GTA VI");
+
+        // Command pattern usage example (changing user password)
+        // In this example, we demonstrate the use of the Command pattern to change a user's password. The UserController,
+        // acting as the Invoker, triggers the ChangePasswordCommand to modify the user's password. The Command encapsulates
+        // the logic for changing the password, allowing for easy execution and undoing of the operation. The before and after
+        // states of the user's password are displayed, showcasing the Command pattern's ability to perform reversible actions.
+        System.out.println(administrative.getPassword());
+        adminController.changePassword(administrative, "456");
+        System.out.println(administrative.getPassword());
+
     }
 }
