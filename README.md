@@ -1,12 +1,16 @@
 # UniRutas
 
-The UniRutas System is a use-case example that showcases the capabilities of the FlexCore mini framework. This system is specifically tailored to keep the university community informed about the status of university routes. However, remember that the framework is entirely separate from the UniRutas System, and is possible to use it in others projects with different use cases.
+> [!NOTE]
+> To see the old project structure and implementation including all the commits and evolution see the `main` branch.
+
+The UniRutas System is a use-case example that showcases the capabilities of the FlexCore mini framework. This system is specifically tailored to keep the university community informed about the status of university routes. However, remember that the framework is entirely separate from the UniRutas System, and it is possible to use it in other projects with different use cases.
 
 ## FlexCore: A Versatile Database-Agnostic Framework
 
 FlexCore is a flexible, database-agnostic mini framework designed for educational purposes, specifically for the "Software 2 - Software Architectures" course. It is not intended as a serious or commercial project. Designed for code agnosticism, this framework provides an essential foundation for building applications that interact with databases, including both SQL and NoSQL solutions.
 
-> **Note:** Actually FlexCore is not ready to be totally independent, this because it doesn't have a "easy way" to add support to more database engines (actually support MySQL, PostgreSQL and MongoDB). This means is needed to modify the source code to add more engines (you can see this in the `SQLDatabaseEngine` and `NoSQLDatabaseEngine` enums inside `com.flexcore.database.enums`).
+> [!IMPORTANT]
+> FlexCore is not ready to be independent, because it doesn't have an "easy way" to add support to more database engines (actually support MySQL, PostgreSQL and MongoDB). This means modifying the source code to add more engines (you can see this in the `SQLDatabaseEngine` and `NoSQLDatabaseEngine` enums inside `com.flexcore.database.enums`).
 
 ####
 
@@ -80,7 +84,8 @@ FlexCore introduces comprehensive annotations:
 
 ##### Example Usages
 
-> **Note:** To see a more deep example of usage, you can explore all the modules of UniRutas
+> [!TIP]  
+> To see a more deep example of usage, you can explore all the modules of UniRutas
 
 - **`@Table`, `@Column` and `@PrimaryKey`**
 
@@ -155,6 +160,6 @@ public class Main {
 
 ### Conclusion
 
-Please note that **FlexCore** is primarily designed for use within the **UniRutas** environment. It may not be easily implemented or used in other contexts. Consequently, this README does not comprehensively cover all of **FlexCore**'s capabilities or provide extensive usage examples.
+**FlexCore** is primarily designed for use within the **UniRutas** environment, but it can also be adapted for other projects. However, please note that a comprehensive guide for its use outside of **UniRutas** is not currently available.
 
-However, if you find **FlexCore** useful as a starting point for your own project, you're welcome to use it. If **FlexCore** has been helpful to you, please consider giving it a star.
+Despite this, if you find **FlexCore** useful and wish to use it as a starting point for your own project, you're welcome to do so. If **FlexCore** has been helpful to you, please consider giving it a star.
