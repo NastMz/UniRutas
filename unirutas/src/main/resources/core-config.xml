@@ -1,0 +1,5 @@
+<config>
+    <scan-packages>
+        <package>com.unirutas</package>
+    </scan-packages>
+</config>
